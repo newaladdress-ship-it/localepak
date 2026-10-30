@@ -7,6 +7,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { Building2, ArrowLeft, ArrowRight, Info, X, Plus, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { auth, db } from '@/lib/firebase'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -303,7 +304,7 @@ export default function AddBusinessPage() {
       // owner gets one confirmation for the whole submission.
       setSavedBusiness({ id: ref.id, name: form.name.trim() })
     } catch (err: any) {
-      toast.error(`Could not submit your business: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit your business: ${safeErrorMessage(err)}`)
     } finally {
       setIsSubmitting(false)
     }
