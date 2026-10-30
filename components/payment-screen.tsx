@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { db, storage } from '@/lib/firebase'
+import { db } from '@/lib/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { compressImageToDataUrl } from '@/lib/compress-image'
 import { Copy, Check, Upload, ShieldCheck, Wallet, ImagePlus, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { TIERS, formatPKR, type ListingTier, type ListingType } from '@/lib/tiers'
@@ -85,16 +85,15 @@ export default function PaymentScreen({
       toast.error('The proof must be an image file.')
       return
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('The image must be under 5MB.')
+    if (file.size > 15 * 1024 * 1024) {
+      toast.error('The image is too large to process — please use a smaller screenshot.')
       return
     }
     setUploading(true)
     try {
-      const path = `payment-proofs/${ownerId}/${listingId}-${Date.now()}`
-      const storageRef = ref(storage, path)
-      await uploadBytes(storageRef, file)
-      const proofUrl = await getDownloadURL(storageRef)
+      // No Firebase Storage on the free plan: compress in the browser and
+      // store the proof directly in Firestore as a data URL.
+      const proofUrl = await compressImageToDataUrl(file)
       await addDoc(collection(db, 'payment_proofs'), {
         listingId,
         listingType,
@@ -207,7 +206,7 @@ export default function PaymentScreen({
             Upload payment proof screenshot *
           </p>
           <p className="text-sm font-bold text-slate-700 -mt-2">
-            Image only, max 5MB — take a clear screenshot of your payment confirmation.
+            Image only — your screenshot is compressed automatically before saving.
           </p>
           <input
             id="tier-payment-proof"
@@ -224,7 +223,7 @@ export default function PaymentScreen({
             >
               <ImagePlus className="w-10 h-10 text-emerald-600" />
               <span className="text-base font-extrabold text-emerald-700">Tap to choose your screenshot</span>
-              <span className="text-xs font-bold text-slate-500">JPG, PNG or any image — up to 5MB</span>
+              <span className="text-xs font-bold text-slate-500">JPG, PNG or any image — compressed automatically</span>
             </label>
           ) : (
             <div className="rounded-xl border-2 border-emerald-600 bg-white p-3 space-y-3">
