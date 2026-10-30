@@ -26,7 +26,7 @@ function slugify(value: string): string {
 }
 
 const inputClass =
-  'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600'
+  'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600'
 const labelClass = 'block text-xs font-bold text-slate-700 mb-1'
 
 export default function AddCompanyPage() {
@@ -121,7 +121,7 @@ export default function AddCompanyPage() {
       <>
         <Navbar />
         <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
-          <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl">
+          <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
             <PaymentScreen
               tier={tier}
               listingType="company"
@@ -152,7 +152,7 @@ export default function AddCompanyPage() {
     <>
       <Navbar />
       <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
-        <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl">
+        <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
           <div className="text-center mb-8">
             <div className="inline-flex p-3 rounded-2xl bg-emerald-50 text-emerald-600 mb-3">
               <Factory className="w-8 h-8" />
