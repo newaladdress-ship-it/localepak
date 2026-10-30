@@ -1,7 +1,7 @@
 const stats = [
   { value: '24', label: 'Business Categories', icon: '🏢' },
   { value: 'Free', label: 'Listing — Always', icon: '👥' },
-  { value: '180+', label: 'City Guides', icon: '📍' },
+  { value: '183', label: 'City Guides', icon: '📍' },
 ]
 
 export default function StatsSection() {
