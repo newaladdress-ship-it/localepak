@@ -25,7 +25,7 @@ export default function CityCategoryListings({
         </h2>
         <p className="text-sm text-slate-500 max-w-md mx-auto">
           This page is ready for its first {categoryName.toLowerCase()} listing. If you run one in {city},
-          add it free and, once approved, your profile will appear here with the next weekly release.
+          add it free and, once approved, your profile will appear here immediately.
         </p>
         <Link
           href="/add-business"

@@ -207,7 +207,7 @@ export default async function CityCategoryPage(props: {
 
         <OwnerCtaBand
           title={`Run a ${cat.name.toLowerCase()} business in ${city}?`}
-          text={`List it free on this page: register, complete the eight-step form, and once approved, your profile goes public with the next weekly release, and then appears here with call and WhatsApp buttons customers can use directly.`}
+          text={`List it free on this page: register, complete the eight-step form, and once approved, your profile goes live immediately, and then appears here with call and WhatsApp buttons customers can use directly.`}
           links={[
             { label: `All businesses in ${city}`, href: `/city/${citySlug}` },
             { label: `${cat.name} across Pakistan`, href: `/category/${cat.id}` },
