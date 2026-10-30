@@ -360,7 +360,7 @@ export default async function BlogPage() {
                 <input
                   type="email"
                   placeholder="Enter your email address..."
-                  className="flex-1 px-4 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                  className="flex-1 px-4 py-3 bg-[#F8FAFC] border border-[#E2E8F0] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                   required
                 />
                 <button
