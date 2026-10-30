@@ -67,7 +67,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 sm:p-10 shadow-xl space-y-6">
+    <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-10 shadow-xl space-y-6">
       <div className="text-center space-y-2">
         <div className="inline-flex p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 shadow-inner">
           <LogIn className="w-8 h-8" />
