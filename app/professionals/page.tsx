@@ -6,20 +6,26 @@ import { UserRound, ArrowRight } from 'lucide-react'
 import { getApprovedProfessionalCards } from '@/lib/public-listings'
 import ProfessionalCard from '@/components/professional-card'
 
-export const metadata: Metadata = {
-  title: 'Professionals in Pakistan – Find Doctors, Lawyers, Experts | LocalePak',
-  description: 'Find approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors and more — and contact them directly.',
-  alternates: {
-    canonical: 'https://www.localepak.com/professionals/',
-  },
-  openGraph: {
-    title: 'Professionals in Pakistan – Find Doctors, Lawyers, Experts | LocalePak',
-    description: 'Find approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors and more — and contact them directly.',
-    url: 'https://www.localepak.com/professionals/',
-    siteName: 'LocalePak',
-    locale: 'en_PK',
-    type: 'website',
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const professionals = await getApprovedProfessionalCards()
+  const title = 'Professionals in Pakistan – Find Doctors, Lawyers, Experts | LocalePak'
+  const description = 'Find approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors and more — and contact them directly.'
+  return {
+    title,
+    description,
+    ...(professionals.length === 0 ? { robots: { index: false, follow: false } } : {}),
+    alternates: {
+      canonical: 'https://www.localepak.com/professionals/',
+    },
+    openGraph: {
+      title,
+      description,
+      url: 'https://www.localepak.com/professionals/',
+      siteName: 'LocalePak',
+      locale: 'en_PK',
+      type: 'website',
+    },
+  }
 }
 
 // SERVER component: approved professional profiles are fetched on the
