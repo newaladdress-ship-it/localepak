@@ -189,7 +189,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         placeholder="Enter your full name"
-                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                       />
                     </div>
                     <div>
@@ -200,7 +200,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         placeholder="your@email.com"
-                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                       />
                     </div>
                   </div>
@@ -213,7 +213,7 @@ export default function ContactPage() {
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+92 334 5636230"
-                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                       />
                     </div>
                     <div>
@@ -223,7 +223,7 @@ export default function ContactPage() {
                         value={formData.city}
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                         placeholder="e.g. Islamabad, Karachi, Lahore"
-                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                        className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                       />
                     </div>
                   </div>
@@ -233,7 +233,7 @@ export default function ContactPage() {
                     <select
                       value={formData.subject}
                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                      className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                     >
                       <option value="Free Business Listing Help">Free Business Listing Help</option>
                       <option value="Job Posting Support">Job Posting Support</option>
@@ -251,7 +251,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       placeholder="Describe your question or issue in detail..."
-                      className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-sm focus:outline-none focus:border-[#059669]"
+                      className="w-full px-4 py-2.5 bg-[#F4F7FC] border border-[#D1FAE5] rounded-xl text-base sm:text-sm focus:outline-none focus:border-[#059669]"
                     ></textarea>
                   </div>
 
