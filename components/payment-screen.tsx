@@ -6,6 +6,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { compressImageToDataUrl } from '@/lib/compress-image'
 import { Copy, Check, Upload, ShieldCheck, Wallet, ImagePlus, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { TIERS, formatPKR, type ListingTier, type ListingType } from '@/lib/tiers'
 import { PAYMENT_METHODS, type PaymentMethodId } from '@/lib/payment-methods'
 import { notifyAdminNewPaymentProof } from '@/lib/mail'
@@ -118,7 +119,7 @@ export default function PaymentScreen({
       toast.success('Payment proof submitted — we will email you once it is verified.')
       await onSubmitted()
     } catch (err: any) {
-      toast.error(`Upload failed: ${err?.message || 'Unknown error'}`)
+      toast.error(`Upload failed: ${safeErrorMessage(err)}`)
     } finally {
       setUploading(false)
     }
