@@ -32,7 +32,7 @@ function mapRegisterError(err: any): string {
     case 'auth/network-request-failed':
       return 'Network error. Please check your connection and try again.'
     default:
-      return `Registration failed: ${err?.message || 'Unknown error'}. The sign-up service is not configured yet. Please try again later.`
+      return 'Registration failed. Please try again later.'
   }
 }
 
