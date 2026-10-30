@@ -176,7 +176,7 @@ export default function AdvertiseWithUsPage() {
                 <SearchCheck className="w-8 h-8 text-emerald-600" />
                 <h3 className="font-extrabold text-slate-900">3. Get discovered</h3>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  Our team reviews your submission. Once approved, your profile goes public with the next weekly release, and then appears in your
+                  Our team reviews your submission. Once approved, your profile goes live immediately, and then appears in your
                   category, your city and search — customers call or WhatsApp you directly.
                 </p>
                 <Link href="/business-listing-guidelines" className="inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:underline">
