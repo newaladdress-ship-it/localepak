@@ -6,6 +6,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { UserRound, ArrowRight, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { auth, db } from '@/lib/firebase'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -138,7 +139,7 @@ export default function AddProfessionalPage() {
       // goes out only after the payment proof is uploaded.
       setSavedProfile({ id: ref.id, name: name.trim() })
     } catch (err: any) {
-      toast.error(`Could not submit your profile: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit your profile: ${safeErrorMessage(err)}`)
     } finally {
       setIsSubmitting(false)
     }
