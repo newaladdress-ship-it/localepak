@@ -173,7 +173,7 @@ export default async function CityPage(props: {
               </h3>
               <p className="text-sm text-slate-500 max-w-md mx-auto">
                 This page is ready for its first {city} listing. If you run a business here,
-                add it free and, once approved, your profile will appear here with the next weekly release.
+                add it free and, once approved, your profile will appear here immediately.
               </p>
               <Link
                 href="/add-business"
@@ -266,7 +266,7 @@ export default async function CityPage(props: {
 
         <OwnerCtaBand
           title={`Run a business in ${city}? Get listed free.`}
-          text={`Join the ${city} directory: create a free account, complete the eight-step form, and once approved, your profile goes public with the next weekly release, and then appears on this page, in your category and in search.`}
+          text={`Join the ${city} directory: create a free account, complete the eight-step form, and once approved, your profile goes live immediately, and then appears on this page, in your category and in search.`}
           links={[
             { label: `All businesses in ${city}`, href: '/businesses' },
             { label: 'Browse categories', href: '/categories' },
