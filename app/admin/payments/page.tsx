@@ -15,6 +15,9 @@ export default function AdminPaymentsPage() {
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState<string | null>(null)
   const [notes, setNotes] = useState<Record<string, string>>({})
+  // Full-size proof viewer: data-URL proofs cannot open in a new tab
+  // (browsers block top-level navigation to data: URLs), so view inline.
+  const [viewingUrl, setViewingUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const load = async () => {
@@ -160,7 +163,12 @@ export default function AdminPaymentsPage() {
             return (
               <article key={id} className="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col md:flex-row gap-5">
                 {data.proofUrl ? (
-                  <a href={data.proofUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 group relative">
+                  <button
+                    type="button"
+                    onClick={() => setViewingUrl(data.proofUrl)}
+                    className="shrink-0 group relative"
+                    aria-label={`View payment proof for ${data.listingName || 'listing'} full size`}
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={data.proofUrl}
@@ -170,7 +178,7 @@ export default function AdminPaymentsPage() {
                     <span className="absolute bottom-1.5 right-1.5 bg-slate-900/80 text-white rounded-md p-1">
                       <ExternalLink className="w-3 h-3" />
                     </span>
-                  </a>
+                  </button>
                 ) : (
                   <div className="w-28 h-28 shrink-0 rounded-xl border border-dashed border-slate-300 flex items-center justify-center text-[11px] text-slate-400">
                     No image
@@ -218,6 +226,28 @@ export default function AdminPaymentsPage() {
               </article>
             )
           })}
+        </div>
+      )}
+      {viewingUrl && (
+        <div
+          className="fixed inset-0 z-50 bg-slate-950/80 flex items-center justify-center p-4"
+          onClick={() => setViewingUrl(null)}
+        >
+          <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={viewingUrl}
+              alt="Payment proof full size"
+              className="max-w-full max-h-[85vh] object-contain rounded-xl bg-white"
+            />
+            <button
+              type="button"
+              onClick={() => setViewingUrl(null)}
+              className="absolute -top-3 -right-3 bg-white text-slate-900 rounded-full px-3 py-1.5 text-xs font-extrabold shadow"
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>
