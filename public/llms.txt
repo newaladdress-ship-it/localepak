@@ -1,12 +1,12 @@
 # LocalePak
 
-> LocalePak is Pakistan's free business directory. Businesses across 183 cities and 24 categories can create a free listing and get their own individual profile page that can be found and ranked on Google. LocalePak also features company profiles, a jobs board and customer reviews.
+> LocalePak is Pakistan's free business directory. Businesses across 183 cities and 24 categories can create a free listing and get their own individual profile page that can be found and ranked on Google. LocalePak also features company profiles and customer reviews.
 
 ## About LocalePak
 
 LocalePak (https://www.localepak.com) is a free business directory for Pakistan, founded in 2026. It helps people discover local businesses, companies and services by city and category, and it helps businesses get found online without paying listing fees or hiding their contact details behind paywalls.
 
-Every approved business gets its own single page on LocalePak — an individual profile page with its details, services and customer reviews — which search engines can index, so the business can be found and ranked on Google. New approved business listings are published in weekly batches.
+Every approved business gets its own single page on LocalePak — an individual profile page with its details, services and customer reviews — which search engines can index, so the business can be found and ranked on Google. New approved business listings go live immediately once approved.
 
 ## Founder, Owner & CEO
 
@@ -26,7 +26,6 @@ LocalePak was founded and is led by Muhammad Imran, its Founder, Owner & CEO. He
 - Free business listings — any business in Pakistan can register and list for free
 - A dedicated single page (individual profile) for every listed business
 - Company profiles for larger organisations
-- A jobs board with job listings
 - Customer reviews on business pages
 - City and category guides that help people choose the right local provider
 - A blog with practical guides for business owners, including local SEO and listing guidance
