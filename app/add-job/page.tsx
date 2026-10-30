@@ -6,6 +6,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { Briefcase, ArrowRight, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { auth, db } from '@/lib/firebase'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -90,7 +91,7 @@ export default function AddJobPage() {
       // goes out only after the payment proof is uploaded.
       setSavedJob({ id: ref.id, name: title.trim() })
     } catch (err: any) {
-      toast.error(`Could not submit your job post: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit your job post: ${safeErrorMessage(err)}`)
     } finally {
       setIsSubmitting(false)
     }
