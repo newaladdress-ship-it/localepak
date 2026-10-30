@@ -81,7 +81,7 @@ export default function AdminBusinessesPage() {
       // follows the weekly release cycle (see lib/release.ts) — an approved
       // business goes live at the next cycle boundary, not immediately.
       { status: 'approved', approvedAt: serverTimestamp(), rejectionReasons: [], rejectionNote: '', rejectedAt: null },
-      'Business approved (any previous rejection cleared). It goes live at the next weekly release.',
+      'Business approved (any previous rejection cleared). It is live now.',
       // Owner approval email (states the actual release date) — queued only.
       () => queueListingApprovedEmail(COL, item)
     )
