@@ -76,7 +76,7 @@ export default function AdminPaymentsPage() {
         await queuePaymentApprovedEmail(item)
         toast.success(
           `Payment verified — ${data.listingName || 'listing'} approved (${data.tier}).${
-            data.listingType === 'business' ? ' It goes live at the next weekly release.' : ' It is now live.'
+            ' It is now live.'
           }`
         )
         return
