@@ -9,7 +9,7 @@ import { doc, getDoc, collection, query, where, getCountFromServer } from 'fireb
 import {
   LayoutDashboard, Building2, Factory, Briefcase, Star, CreditCard,
   Mail, FileText, Users, Home, LayoutGrid, LogOut, ShieldAlert,
-  Lock, Eye, EyeOff, AlertCircle, ShieldCheck, Pencil, Newspaper, UserRound,
+  Lock, Eye, EyeOff, AlertCircle, ShieldCheck, Pencil, Newspaper, UserRound, Settings,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -26,6 +26,7 @@ const NAV = [
   { href: '/admin/messages', label: 'Messages', Icon: Mail },
   { href: '/admin/applications', label: 'Applications', Icon: FileText },
   { href: '/admin/users', label: 'Users', Icon: Users },
+  { href: '/admin/settings', label: 'Settings', Icon: Settings },
 ]
 
 function mapAdminLoginError(err: any): string {
