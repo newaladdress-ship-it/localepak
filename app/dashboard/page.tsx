@@ -5,10 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
-import { auth, db, storage } from '@/lib/firebase'
+import { auth, db } from '@/lib/firebase'
 import { onAuthStateChanged, signOut, User } from 'firebase/auth'
 import { collection, query, where, getDocs, doc, getDoc, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { compressImageToDataUrl } from '@/lib/compress-image'
 import { User as UserIcon, Mail, ShieldCheck, LogOut, LayoutGrid, MapPin, HelpCircle, Building2, Factory, Briefcase, PlusCircle, ClipboardList, Crown, BadgeCheck, X, Upload, ShieldAlert, UserRound, Pencil, FolderKanban, Newspaper, Wallet } from 'lucide-react'
 import { toast } from 'sonner'
 import { isReleased, releaseDateLabel } from '@/lib/release'
@@ -219,16 +219,15 @@ export default function DashboardPage() {
       toast.error('The proof must be an image file.')
       return
     }
-    if (upgradeFile.size > 5 * 1024 * 1024) {
-      toast.error('The image must be under 5MB.')
+    if (upgradeFile.size > 15 * 1024 * 1024) {
+      toast.error('The image is too large to process — please use a smaller screenshot.')
       return
     }
     setUploading(true)
     try {
-      const path = `payment-proofs/${user.uid}/${item.id}-${Date.now()}`
-      const storageRef = ref(storage, path)
-      await uploadBytes(storageRef, upgradeFile)
-      const proofUrl = await getDownloadURL(storageRef)
+      // No Firebase Storage on the free plan: compress in the browser and
+      // store the proof directly in Firestore as a data URL.
+      const proofUrl = await compressImageToDataUrl(upgradeFile)
       await addDoc(collection(db, 'payment_proofs'), {
         listingId: item.id,
         listingType: item.type === 'Company' ? 'company' : 'business',
@@ -1011,7 +1010,7 @@ export default function DashboardPage() {
                               </p>
                               <div>
                                 <label htmlFor={`proof-${item.id}`} className="block text-xs font-bold text-slate-700 mb-1">
-                                  Payment screenshot (image, max 5MB)
+                                  Payment screenshot (image, compressed automatically)
                                 </label>
                                 <input
                                   id={`proof-${item.id}`}
