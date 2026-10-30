@@ -6,6 +6,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { Factory, ArrowRight, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { auth, db } from '@/lib/firebase'
 import { onAuthStateChanged, User } from 'firebase/auth'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
@@ -96,7 +97,7 @@ export default function AddCompanyPage() {
       // owner gets one confirmation for the whole submission.
       setSavedCompany({ id: ref.id, name: name.trim() })
     } catch (err: any) {
-      toast.error(`Could not submit your company: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit your company: ${safeErrorMessage(err)}`)
     } finally {
       setIsSubmitting(false)
     }
