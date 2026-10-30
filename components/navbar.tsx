@@ -88,7 +88,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Clean Sidebar Menu Toggle Only */}
-          <div className="flex items-center sm:hidden">
+          <div className="flex items-center lg:hidden">
             <button
               id="mobile-hamburger-btn"
               className="text-white p-2.5 rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer"

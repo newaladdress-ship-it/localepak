@@ -125,7 +125,7 @@ export default function SearchResults({ initialLiveItems }: { initialLiveItems: 
         <div className="max-w-4xl mx-auto space-y-5">
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">Search LocalePak</h1>
           <form action="/search" method="GET" className="flex gap-3">
-            <div className="flex-1 flex items-center gap-3 px-4 py-3 bg-white rounded-2xl text-left">
+            <div className="flex-1 min-w-0 flex items-center gap-3 px-4 py-3 bg-white rounded-2xl text-left">
               <Search className="w-5 h-5 text-slate-400 shrink-0" />
               <label htmlFor="search-page-q" className="sr-only">Search businesses, professionals, categories, cities and guides</label>
               <input

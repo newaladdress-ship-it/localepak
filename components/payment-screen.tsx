@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { db, storage } from '@/lib/firebase'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { Copy, Check, Upload, ShieldCheck, Wallet } from 'lucide-react'
+import { Copy, Check, Upload, ShieldCheck, Wallet, ImagePlus, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { TIERS, formatPKR, type ListingTier, type ListingType } from '@/lib/tiers'
 import { PAYMENT_METHODS, type PaymentMethodId } from '@/lib/payment-methods'
@@ -39,8 +39,20 @@ export default function PaymentScreen({
 }) {
   const [method, setMethod] = useState<PaymentMethodId>('easypaisa')
   const [file, setFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [copied, setCopied] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+
+  // Live preview of the chosen screenshot, so the user can SEE what they picked.
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(null)
+      return
+    }
+    const url = URL.createObjectURL(file)
+    setPreviewUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [file])
 
   const def = TIERS[tier]
   const selected = PAYMENT_METHODS.find((m) => m.id === method) || PAYMENT_METHODS[0]
@@ -136,7 +148,7 @@ export default function PaymentScreen({
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-3">
-          <p className="block text-xs font-bold text-slate-700">Pay with *</p>
+          <p className="block text-sm font-extrabold text-slate-900">Pay with *</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Payment method">
             {PAYMENT_METHODS.map((m) => {
               const active = method === m.id
@@ -152,9 +164,9 @@ export default function PaymentScreen({
                   }`}
                 >
                   <span className="font-extrabold text-slate-900 text-sm">{m.label}</span>
-                  <span className="block text-[11px] text-slate-500 mt-1">Account title: {m.accountTitle}</span>
+                  <span className="block text-xs font-bold text-slate-600 mt-1">Account title: {m.accountTitle}</span>
                   <span className="flex items-center gap-1.5 mt-1">
-                    <span className="text-xs font-mono font-bold text-slate-800">{m.accountNumber}</span>
+                    <span className="text-sm font-mono font-extrabold text-slate-900">{m.accountNumber}</span>
                     <span
                       role="button"
                       tabIndex={0}
@@ -170,7 +182,7 @@ export default function PaymentScreen({
                           void copyNumber(m.accountNumber)
                         }
                       }}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-white border border-slate-200 text-[10px] font-bold text-emerald-700 hover:border-emerald-400 cursor-pointer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-white border border-slate-200 text-xs font-bold text-emerald-700 hover:border-emerald-400 cursor-pointer"
                     >
                       {copied === m.accountNumber ? (
                         <>
@@ -187,29 +199,77 @@ export default function PaymentScreen({
               )
             })}
           </div>
-          <p className="text-xs text-slate-500 leading-relaxed">{selected.hint}</p>
+          <p className="text-sm font-bold text-slate-700 leading-relaxed">{selected.hint}</p>
         </div>
 
-        <div>
-          <label htmlFor="tier-payment-proof" className="block text-xs font-bold text-slate-700 mb-1">
-            Upload payment proof screenshot (image, max 5MB) *
-          </label>
+        <div className="rounded-2xl border-2 border-emerald-600 bg-emerald-50/60 p-4 space-y-3">
+          <p className="text-base font-extrabold text-slate-900">
+            Upload payment proof screenshot *
+          </p>
+          <p className="text-sm font-bold text-slate-700 -mt-2">
+            Image only, max 5MB — take a clear screenshot of your payment confirmation.
+          </p>
           <input
             id="tier-payment-proof"
             type="file"
             accept="image/*"
             required
             onChange={(e) => setFile(e.target.files?.[0] || null)}
-            className="block w-full text-sm text-slate-600 file:mr-3 file:px-4 file:py-2 file:bg-white file:border file:border-slate-200 file:rounded-xl file:font-bold file:text-xs file:cursor-pointer"
+            className="sr-only"
           />
-          {file && <p className="text-[11px] text-slate-400 mt-1">{file.name}</p>}
+          {!file ? (
+            <label
+              htmlFor="tier-payment-proof"
+              className="flex flex-col items-center justify-center gap-2 w-full min-h-[120px] rounded-xl border-2 border-dashed border-emerald-500 bg-white px-4 py-6 text-center cursor-pointer hover:border-emerald-700 hover:bg-emerald-50 transition-colors"
+            >
+              <ImagePlus className="w-10 h-10 text-emerald-600" />
+              <span className="text-base font-extrabold text-emerald-700">Tap to choose your screenshot</span>
+              <span className="text-xs font-bold text-slate-500">JPG, PNG or any image — up to 5MB</span>
+            </label>
+          ) : (
+            <div className="rounded-xl border-2 border-emerald-600 bg-white p-3 space-y-3">
+              <div className="flex items-start gap-3">
+                {previewUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewUrl}
+                    alt="Selected payment screenshot preview"
+                    className="w-28 h-28 rounded-lg object-cover border border-slate-200 shrink-0"
+                  />
+                ) : null}
+                <div className="min-w-0 flex-1">
+                  <p className="flex items-center gap-1.5 text-sm font-extrabold text-emerald-700">
+                    <Check className="w-4 h-4 shrink-0" /> Screenshot selected
+                  </p>
+                  <p className="text-base font-extrabold text-slate-900 break-all mt-1">{file.name}</p>
+                  <p className="text-xs font-bold text-slate-500 mt-0.5">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFile(null)}
+                  aria-label="Remove selected screenshot"
+                  className="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-white border border-slate-200 text-xs font-bold text-slate-600 hover:border-red-300 hover:text-red-600 cursor-pointer shrink-0"
+                >
+                  <X className="w-3.5 h-3.5" /> Change
+                </button>
+              </div>
+              <label
+                htmlFor="tier-payment-proof"
+                className="block text-center text-sm font-extrabold text-emerald-700 underline underline-offset-2 cursor-pointer"
+              >
+                Tap here to pick a different screenshot
+              </label>
+            </div>
+          )}
         </div>
 
-        <div className="flex gap-2.5 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600">
-          <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+        <div className="flex gap-2.5 p-4 bg-slate-50 border-2 border-slate-300 rounded-xl text-sm font-bold text-slate-800 leading-relaxed">
+          <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
           <span>
             Send exactly {formatPKR(def.price)} via {selected.label}, then upload the screenshot. Our team verifies
-            every payment by hand — once approved, your listing goes live (businesses join the weekly release batch).
+            every payment by hand — once approved, your listing goes live immediately.
             If a payment cannot be verified, the listing is rejected and the reason is shown in your dashboard.
           </span>
         </div>
@@ -217,7 +277,7 @@ export default function PaymentScreen({
         <button
           type="submit"
           disabled={uploading || !file}
-          className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+          className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-base rounded-xl transition-colors shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
         >
           <Upload className="w-4 h-4" />
           <span>{uploading ? 'Uploading...' : 'Submit Payment Proof'}</span>

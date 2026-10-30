@@ -66,11 +66,12 @@ export default function Footer() {
               <span>Directory</span>
             </h3>
             <ul className="space-y-2 text-xs text-slate-300">
-              <li><Link href="/categories" className="hover:text-emerald-400 transition-colors">All Categories</Link></li>
-              <li><Link href="/cities" className="hover:text-emerald-400 transition-colors">All Cities</Link></li>
-              <li><Link href="/businesses" prefetch={false} className="hover:text-emerald-400 transition-colors">Businesses</Link></li>
-              <li><Link href="/companies" prefetch={false} className="hover:text-emerald-400 transition-colors">Companies</Link></li>
-              <li><Link href="/search" prefetch={false} className="hover:text-emerald-400 transition-colors">Search</Link></li>
+              <li><Link href="/categories" className="inline-block py-1 hover:text-emerald-400 transition-colors">All Categories</Link></li>
+              <li><Link href="/cities" className="inline-block py-1 hover:text-emerald-400 transition-colors">All Cities</Link></li>
+              <li><Link href="/businesses" prefetch={false} className="inline-block py-1 hover:text-emerald-400 transition-colors">Businesses</Link></li>
+              <li><Link href="/companies" prefetch={false} className="inline-block py-1 hover:text-emerald-400 transition-colors">Companies</Link></li>
+              <li><Link href="/jobs" prefetch={false} className="inline-block py-1 hover:text-emerald-400 transition-colors">Jobs</Link></li>
+              <li><Link href="/search" prefetch={false} className="inline-block py-1 hover:text-emerald-400 transition-colors">Search</Link></li>
             </ul>
           </div>
 
@@ -81,13 +82,13 @@ export default function Footer() {
               <span>Top Hubs</span>
             </h3>
             <ul className="space-y-2 text-xs text-slate-300">
-              <li><Link href="/city/karachi" className="hover:text-emerald-400 transition-colors">Karachi Directory</Link></li>
-              <li><Link href="/city/lahore" className="hover:text-emerald-400 transition-colors">Lahore Directory</Link></li>
-              <li><Link href="/city/islamabad" className="hover:text-emerald-400 transition-colors">Islamabad Directory</Link></li>
-              <li><Link href="/city/rawalpindi" className="hover:text-emerald-400 transition-colors">Rawalpindi Directory</Link></li>
-              <li><Link href="/city/faisalabad" className="hover:text-emerald-400 transition-colors">Faisalabad Directory</Link></li>
-              <li><Link href="/city/multan" className="hover:text-emerald-400 transition-colors">Multan Directory</Link></li>
-              <li><Link href="/city/peshawar" className="hover:text-emerald-400 transition-colors">Peshawar Directory</Link></li>
+              <li><Link href="/city/karachi" className="inline-block py-1 hover:text-emerald-400 transition-colors">Karachi Directory</Link></li>
+              <li><Link href="/city/lahore" className="inline-block py-1 hover:text-emerald-400 transition-colors">Lahore Directory</Link></li>
+              <li><Link href="/city/islamabad" className="inline-block py-1 hover:text-emerald-400 transition-colors">Islamabad Directory</Link></li>
+              <li><Link href="/city/rawalpindi" className="inline-block py-1 hover:text-emerald-400 transition-colors">Rawalpindi Directory</Link></li>
+              <li><Link href="/city/faisalabad" className="inline-block py-1 hover:text-emerald-400 transition-colors">Faisalabad Directory</Link></li>
+              <li><Link href="/city/multan" className="inline-block py-1 hover:text-emerald-400 transition-colors">Multan Directory</Link></li>
+              <li><Link href="/city/peshawar" className="inline-block py-1 hover:text-emerald-400 transition-colors">Peshawar Directory</Link></li>
             </ul>
           </div>
 

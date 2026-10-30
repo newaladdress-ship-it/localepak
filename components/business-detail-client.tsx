@@ -540,7 +540,7 @@ export default function BusinessDetailPage({
                           aria-checked={reviewForm.rating === n}
                           aria-label={`${n} star${n === 1 ? '' : 's'}`}
                           onClick={() => setReviewForm({ ...reviewForm, rating: n })}
-                          className="p-0.5 cursor-pointer"
+                          className="p-1.5 cursor-pointer"
                         >
                           <Star className={`w-6 h-6 ${n <= reviewForm.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
                         </button>

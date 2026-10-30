@@ -5,7 +5,7 @@ type RelatedLink = { label: string; href: string }
 
 export default function OwnerCtaBand({
   title = 'Run a business in Pakistan? Get listed free.',
-  text = 'Create a free account, complete the eight-step Add Business form, and once approved, your listing goes public with the next weekly release, and then appears in your category, your city and search — with call and WhatsApp buttons customers can use directly. No commission, no subscription.',
+  text = 'Create a free account, complete the eight-step Add Business form, and once approved, your listing goes live immediately, and then appears in your category, your city and search — with call and WhatsApp buttons customers can use directly. No commission, no subscription.',
   links = [],
 }: {
   title?: string

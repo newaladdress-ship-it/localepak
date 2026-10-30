@@ -97,7 +97,7 @@ export default function CookieConsentBanner() {
           role="dialog"
           aria-live="polite"
           aria-label="Cookie consent banner"
-          className="fixed bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-xl z-50 bg-[#0f172a] text-white p-5 sm:p-6 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-5 duration-300"
+          className="fixed bottom-20 md:bottom-4 left-4 right-4 md:left-auto md:right-6 md:max-w-xl z-50 bg-[#0f172a] text-white p-5 sm:p-6 rounded-2xl shadow-2xl border border-slate-700/80 animate-in fade-in slide-in-from-bottom-5 duration-300"
         >
           <div className="flex items-start gap-3.5">
             <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
