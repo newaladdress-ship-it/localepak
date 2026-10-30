@@ -1,6 +1,5 @@
 import { queueOwnerEmail } from '@/lib/owner-mail'
 import { loadOwnerEmail } from '@/lib/owner-contact'
-import { releaseDateLabel } from '@/lib/release'
 
 // ============================================================
 // LocalePak — transactional mail (welcome / received /
@@ -119,7 +118,7 @@ export async function queueSubmissionEmails(args: {
   const subject = `We received your ${label} '${name}' — it is under review`
   const releaseNote =
     kind === 'business'
-      ? ' Once approved, business listings are published in our weekly release batch, and we will email you the date yours goes live.'
+      ? ' Once approved, it goes live on LocalePak straight away.'
       : ' Once approved, it goes live on LocalePak straight away.'
   const text = [
     greeting(ownerName),
@@ -249,14 +248,13 @@ export async function queueListingApprovedEmail(
   if (!ownerEmail) return false
 
   if (col === 'businesses') {
-    const dateLabel = releaseDateLabel(Date.now())
-    const subject = `Good news — '${name}' is approved and goes live on ${dateLabel}`
+    const subject = `Good news — '${name}' is approved and now live`
     const text = [
       greeting(ownerName),
       '',
       `Great news: your business listing '${name}' has been approved by our review team.`,
       '',
-      `LocalePak publishes newly approved businesses in a weekly batch, so your listing will go live on ${dateLabel}. There is nothing else you need to do — from that date it will appear in search results and in its city and category pages.`,
+      `Your listing is live now — it appears in search results and in its city and category pages.`,
       ...(data.slug ? ['', `Your listing page: ${SITE}/business/${data.slug}`] : []),
       '',
       'Want more customers? Ask your happy customers to leave a review on your listing page — reviews help you rank higher.',
@@ -268,7 +266,7 @@ export async function queueListingApprovedEmail(
     const html = shell(`
       <p>${esc(greeting(ownerName))}</p>
       <p>Great news: your business listing <strong>${esc(name)}</strong> has been approved by our review team.</p>
-      <p>LocalePak publishes newly approved businesses in a weekly batch, so your listing will go live on <strong>${esc(dateLabel)}</strong>. There is nothing else you need to do — from that date it will appear in search results and in its city and category pages.</p>
+      <p>Your listing is live now — it appears in search results and in its city and category pages.</p>
       ${data.slug ? `<p><a href="${SITE}/business/${esc(data.slug)}">Preview your listing page</a></p>` : ''}
       <p>Want more customers? Ask your happy customers to leave a review on your listing page — reviews help you rank higher.</p>
       <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
@@ -324,14 +322,13 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
   if (!ownerEmail) return false
 
   // Tier payment approval (new paid-listing flow): verifying the
-  // proof also approves the listing itself. Businesses join the
-  // weekly release batch; everything else goes live at once.
+  // proof also approves the listing itself, and it goes live at once
+  // (weekly release batch paused 2026-10-29).
   if (data.tier) {
     const tierLabel = data.tier === 'premium' ? 'Premium' : data.tier === 'featured' ? 'Featured' : 'Basic'
     const isBusiness = data.listingType === 'business'
-    const dateLabel = releaseDateLabel(Date.now())
     const subject = isBusiness
-      ? `Payment verified — '${listingName}' is approved and goes live on ${dateLabel}`
+      ? `Payment verified — '${listingName}' is approved and now live`
       : `Payment verified — your ${tierLabel} listing '${listingName}' is now live`
     const text = [
       'Hello,',
@@ -339,7 +336,7 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
       `We have verified your payment, and your ${tierLabel} listing '${listingName}' has been approved.`,
       '',
       isBusiness
-        ? `LocalePak publishes newly approved businesses in a weekly batch, so your listing will go live on ${dateLabel}. There is nothing else you need to do.`
+        ? 'Your listing is now live on LocalePak.'
         : 'Your listing is now live on LocalePak.',
       '',
       `Manage your listing any time from your dashboard: ${SITE}/dashboard`,
@@ -351,11 +348,7 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
     const html = shell(`
       <p>Hello,</p>
       <p>We have verified your payment, and your <strong>${tierLabel}</strong> listing <strong>${esc(listingName)}</strong> has been approved.</p>
-      <p>${esc(
-        isBusiness
-          ? `LocalePak publishes newly approved businesses in a weekly batch, so your listing will go live on ${dateLabel}. There is nothing else you need to do.`
-          : 'Your listing is now live on LocalePak.'
-      )}</p>
+      <p>Your listing is now live on LocalePak.</p>
       <p>Manage your listing any time from <a href="${SITE}/dashboard">your dashboard</a>.</p>
       <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
     `)

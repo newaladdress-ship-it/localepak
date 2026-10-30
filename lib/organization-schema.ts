@@ -36,13 +36,20 @@ export const organizationSchema = {
   url: 'https://www.localepak.com/',
   logo: 'https://www.localepak.com/logo.svg',
   description:
-    "LocalePak is Pakistan's free business directory, covering 183 cities and 24 business categories. Any business can create a free listing and get its own individual profile page that can be found and ranked on Google. LocalePak also offers company profiles, a jobs board and customer reviews.",
+    "LocalePak is Pakistan's free business directory, covering 183 cities and 24 business categories. Any business can create a free listing and get its own individual profile page that can be found and ranked on Google. LocalePak also offers company profiles and customer reviews.",
   foundingDate: '2026',
   areaServed: {
     '@type': 'Country',
     name: 'Pakistan',
   },
   founder: { '@id': LOCALEPAK_FOUNDER_ID },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Office 303, Evacuee Trust Complex, F-5/1',
+    addressLocality: 'Islamabad',
+    postalCode: '44000',
+    addressCountry: 'PK',
+  },
   telephone: '+92 334 5636230',
   contactPoint: {
     '@type': 'ContactPoint',

@@ -267,7 +267,7 @@ Knowing the districts pays off when you search. Business profiles show their are
 
 ### Add Your Business in ${city} — It's Free
 
-Own a business in ${city}? Listing on LocalePak costs nothing. Create a free account, then complete the eight-step Add Business form — contact details, category, location, opening hours, services and products. Our team reviews every submission, and once yours is approved, it goes public with the next weekly release, and then appears on this city page, on your category page and in search results, where customers can call or WhatsApp you directly.
+Own a business in ${city}? Listing on LocalePak costs nothing. Create a free account, then complete the eight-step Add Business form — contact details, category, location, opening hours, services and products. Our team reviews every submission, and once yours is approved, it goes live immediately, and then appears on this city page, on your category page and in search results, where customers can call or WhatsApp you directly.
 
 Want customers to trust your profile faster? Add the official identifiers you already hold: your FBR NTN if you are tax-registered with the Federal Board of Revenue, your Securities and Exchange Commission of Pakistan incorporation details if you run a registered company, or membership of a local chamber such as the Karachi Chamber of Commerce and Industry or the Lahore Chamber of Commerce and Industry.
 
@@ -359,7 +359,7 @@ Choose your city from the list below to open its dedicated ${info.label.toLowerC
 
 ### Is LocalePak free for customers and for businesses?
 
-Yes, both. Searching and contacting businesses costs nothing, and owners list their businesses free: create an account, complete the eight-step form, and once approved, it goes public with the next weekly release, and then appears in this category, on the city page and in search.
+Yes, both. Searching and contacting businesses costs nothing, and owners list their businesses free: create an account, complete the eight-step form, and once approved, it goes live immediately, and then appears in this category, on the city page and in search.
 
 ### How are listings checked before they appear?
 
@@ -381,7 +381,7 @@ Providers cluster most densely in Karachi, Lahore and Islamabad, but strong opti
 
 ### List Your ${info.label} Business — Free
 
-Run a ${info.label.toLowerCase()} business anywhere in Pakistan? Listing it on LocalePak is free: create an account, complete the eight-step Add Business form, and once approved, it goes public with the next weekly release, and then appears in this category, on your city page and in search. No charge, no card details, no subscription.
+Run a ${info.label.toLowerCase()} business anywhere in Pakistan? Listing it on LocalePak is free: create an account, complete the eight-step Add Business form, and once approved, it goes live immediately, and then appears in this category, on your city page and in search. No charge, no card details, no subscription.
 
 Choose your city below to start comparing ${info.label.toLowerCase()} providers near you.`
 }
@@ -445,7 +445,7 @@ Yes. Owners submit their own listings and our team reviews each one before it ap
 
 ### I run a ${catInfo.label.toLowerCase()} business in ${city}. How do I get listed here?
 
-Create a free account and complete the eight-step Add Business form. Once approved, it goes public with the next weekly release, and then appears on this page, on the ${city} page and in search — free, with your call and WhatsApp buttons live.
+Create a free account and complete the eight-step Add Business form. Once approved, it goes live immediately, and then appears on this page, on the ${city} page and in search — free, with your call and WhatsApp buttons live.
 
 ### Own a ${catInfo.label} Business in ${city}? List It Free
 

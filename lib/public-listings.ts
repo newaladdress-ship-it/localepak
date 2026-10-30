@@ -93,6 +93,59 @@ export async function fetchApprovedCompanies(): Promise<ListingDoc[]> {
   }
 }
 
+/** All approved job documents (serialized). Jobs have no release cycle — approved is public. */
+export async function fetchApprovedJobs(): Promise<ListingDoc[]> {
+  if (isDummyFirebase) return []
+  try {
+    const snap = await getDocs(query(collection(db, 'jobs'), where('status', '==', 'approved')))
+    const rows: ListingDoc[] = []
+    snap.forEach((d) => rows.push({ id: d.id, data: serializeValue(d.data()) }))
+    return rows
+  } catch {
+    return []
+  }
+}
+
+/** One job document by slug (public single-document read), or null. */
+export async function fetchJobBySlug(slug: string): Promise<ListingDoc | null> {
+  if (isDummyFirebase) return null
+  try {
+    const snap = await getDocs(query(collection(db, 'jobs'), where('slug', '==', slug), limit(1)))
+    if (snap.empty) return null
+    const d = snap.docs[0]
+    return { id: d.id, data: serializeValue(d.data()) }
+  } catch {
+    return null
+  }
+}
+
+export type PublicJobCard = {
+  id: string
+  title: string
+  slug: string
+  companyName: string
+  city: string
+  jobType: string
+  salaryRange: string
+  description: string
+}
+export async function getApprovedJobCards(): Promise<PublicJobCard[]> {
+  const rows = await fetchApprovedJobs()
+  return rows.map((row) => {
+    const d = row.data || {}
+    return {
+      id: row.id,
+      title: d.title || '',
+      slug: d.slug || '',
+      companyName: d.companyName || '',
+      city: d.city || '',
+      jobType: d.jobType || '',
+      salaryRange: d.salaryRange || '',
+      description: d.description || '',
+    }
+  })
+}
+
 /** One business document by slug (public single-document read), or null. */
 export async function fetchBusinessBySlug(slug: string): Promise<ListingDoc | null> {
   if (isDummyFirebase) return null

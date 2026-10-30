@@ -101,8 +101,16 @@ function approvedAtToMs(approvedAt: ApprovedAtInput): number | null {
  * Whether a business approved at `approvedAt` is publicly released
  * at `nowMs`. A missing approvedAt means a legacy record approved
  * before the release cycle existed — those stay visible.
+ *
+ * PAUSED by owner order 2026-10-29 (for now): the cycle check is
+ * bypassed, so an approved business goes live immediately. The
+ * cycle code below is kept intact — restore it by setting
+ * RELEASE_CYCLE_PAUSED to false.
  */
+const RELEASE_CYCLE_PAUSED = true
+
 export function isReleased(approvedAt: ApprovedAtInput, nowMs: number): boolean {
+  if (RELEASE_CYCLE_PAUSED) return true
   const t = approvedAtToMs(approvedAt)
   if (t === null) return true
   return t <= releaseBoundary(nowMs)

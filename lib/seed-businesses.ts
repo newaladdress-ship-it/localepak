@@ -2,8 +2,8 @@
 // LocalePak — Seed business listings (FULLY STATIC dataset)
 // ------------------------------------------------------------
 // Source: ~/workspace/localepak-seed-businesses.md (research list,
-// 21 Oct 2026) — 91 real Pakistani businesses selected for daily
-// branded-search demand.
+// 21 Oct 2026) — dataset now 116 Pakistani businesses (expanded from
+// the original 91; added entries' sourcing to be re-confirmed).
 //
 // INTEGRITY RULES baked into this dataset:
 // - Only publicly verified fields are included. Where the source
