@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { db } from '@/lib/firebase'
 import { doc, getDoc, updateDoc } from 'firebase/firestore'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { ArrowLeft, X, Plus } from 'lucide-react'
 import { CITIES, CATEGORIES } from '@/lib/data'
 import { StatusBadge } from '@/components/admin-shared'
@@ -106,7 +107,7 @@ export default function AdminEditBusinessPage() {
       toast.success('Business updated.')
       router.push('/admin/businesses')
     } catch (err: any) {
-      toast.error(`Save failed: ${err?.message || 'Unknown error'}`)
+      toast.error(`Save failed: ${safeErrorMessage(err)}`)
     } finally {
       setSaving(false)
     }
