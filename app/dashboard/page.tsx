@@ -29,6 +29,7 @@ type ListingItem = {
   paymentStatus?: string
   projects?: Project[]
   city?: string
+  slug?: string
 }
 
 function slugify(value: string): string {
@@ -36,6 +37,15 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+}
+
+/** Public page for an approved dashboard listing, or null (pending/rejected/slug-less). */
+function publicPath(item: ListingItem): string | null {
+  if (item.status !== 'approved' || !item.slug) return null
+  if (item.type === 'Company') return `/company/${item.slug}`
+  if (item.type === 'Job') return `/job/${item.slug}`
+  if (item.type === 'Professional') return `/professional/${item.slug}`
+  return `/business/${item.slug}`
 }
 
 /** Dashboard listing type → tier-system listing type. */
@@ -124,6 +134,7 @@ export default function DashboardPage() {
               paymentStatus: data.paymentStatus || undefined,
               projects: Array.isArray(data.projects) ? data.projects.filter(isValidProject) : [],
               city: data.city || '',
+              slug: data.slug || '',
             })
           })
         } catch {
@@ -647,7 +658,7 @@ export default function DashboardPage() {
                                   type="button"
                                   onClick={() => openPayPanel(item)}
                                   aria-expanded={payFor === item.id}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] rounded-full transition-colors cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-full transition-colors cursor-pointer"
                                 >
                                   <Wallet className="w-3.5 h-3.5" /> {item.paymentStatus === 'payment_rejected' ? 'Re-upload Proof' : 'Pay Now'}
                                 </button>
@@ -657,7 +668,7 @@ export default function DashboardPage() {
                                   type="button"
                                   onClick={() => void openEditPanel(item)}
                                   aria-expanded={editFor === item.id}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 font-bold text-[11px] rounded-full transition-colors cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 font-bold text-xs rounded-full transition-colors cursor-pointer"
                                 >
                                   <Pencil className="w-3.5 h-3.5" /> Request Edit
                                 </button>
@@ -667,7 +678,7 @@ export default function DashboardPage() {
                                   type="button"
                                   onClick={() => setProjectsFor(projectsFor === item.id ? null : item.id)}
                                   aria-expanded={projectsFor === item.id}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 font-bold text-[11px] rounded-full transition-colors cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 font-bold text-xs rounded-full transition-colors cursor-pointer"
                                 >
                                   <FolderKanban className="w-3.5 h-3.5" /> Projects ({(item.projects || []).length}/{projectLimit})
                                 </button>
@@ -680,10 +691,19 @@ export default function DashboardPage() {
                                     setUpgradeFile(null)
                                   }}
                                   aria-expanded={panelOpen}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white font-bold text-[11px] rounded-full transition-colors cursor-pointer"
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-full transition-colors cursor-pointer"
                                 >
                                   <Crown className="w-3.5 h-3.5" /> Upgrade
                                 </button>
+                              )}
+                              {publicPath(item) && (
+                                <Link
+                                  href={publicPath(item)!}
+                                  prefetch={false}
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-300 hover:border-emerald-500 text-slate-700 font-bold text-xs rounded-full transition-colors"
+                                >
+                                  View listing
+                                </Link>
                               )}
                             </div>
                           </div>
@@ -748,7 +768,7 @@ export default function DashboardPage() {
                               </p>
                               <Link
                                 href={item.type === 'Company' ? '/add-company' : item.type === 'Job' ? '/add-job' : '/add-business'}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] rounded-lg transition-colors"
+                                className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg transition-colors"
                               >
                                 <PlusCircle className="w-3.5 h-3.5" /> Create a New Listing
                               </Link>
@@ -827,7 +847,7 @@ export default function DashboardPage() {
                                             rows={3}
                                             value={editFields[key] || ''}
                                             onChange={(e) => setEditFields((prev) => ({ ...prev, [key]: e.target.value }))}
-                                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                           />
                                         ) : (
                                           <input
@@ -835,7 +855,7 @@ export default function DashboardPage() {
                                             type={key === 'phone' || key === 'whatsapp' ? 'tel' : 'text'}
                                             value={editFields[key] || ''}
                                             onChange={(e) => setEditFields((prev) => ({ ...prev, [key]: e.target.value }))}
-                                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                           />
                                         )}
                                       </div>
@@ -909,7 +929,7 @@ export default function DashboardPage() {
                                       value={projectTitle}
                                       onChange={(e) => setProjectTitle(e.target.value)}
                                       placeholder="E.g. DHA Phase 9 villa renovation"
-                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                     />
                                   </div>
                                   <div>
@@ -920,7 +940,7 @@ export default function DashboardPage() {
                                       value={projectDesc}
                                       onChange={(e) => setProjectDesc(e.target.value)}
                                       placeholder="What did you build, for whom, and what was the outcome?"
-                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                     />
                                   </div>
                                   <div>
@@ -931,7 +951,7 @@ export default function DashboardPage() {
                                       value={projectLink}
                                       onChange={(e) => setProjectLink(e.target.value)}
                                       placeholder="https://example.com/project"
-                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                      className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                     />
                                   </div>
                                   <button
@@ -976,7 +996,7 @@ export default function DashboardPage() {
                                   id={`plan-${item.id}`}
                                   value={upgradePlan}
                                   onChange={(e) => setUpgradePlan(e.target.value as 'featured' | 'verified')}
-                                  className="w-full sm:w-64 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                                  className="w-full sm:w-64 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                                 >
                                   <option value="featured">Featured Listing</option>
                                   <option value="verified">Verified Badge</option>
@@ -1088,7 +1108,7 @@ export default function DashboardPage() {
                             value={blogTitle}
                             onChange={(e) => setBlogTitle(e.target.value)}
                             placeholder="E.g. How to choose the right solar installer in Lahore"
-                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                           />
                         </div>
                         <div>
@@ -1099,7 +1119,7 @@ export default function DashboardPage() {
                             value={blogExcerpt}
                             onChange={(e) => setBlogExcerpt(e.target.value)}
                             placeholder="One line that makes readers click"
-                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                           />
                         </div>
                         <div>
@@ -1110,7 +1130,7 @@ export default function DashboardPage() {
                             value={blogContent}
                             onChange={(e) => setBlogContent(e.target.value)}
                             placeholder="Write genuinely useful content — tips, guides, or insights from your work. No invented statistics or claims."
-                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600"
+                            className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600"
                           />
                           <p className={`text-[11px] mt-1 font-medium ${blogContent.trim().length >= 100 ? 'text-emerald-600' : 'text-slate-400'}`}>
                             {blogContent.trim().length}/100 characters minimum
