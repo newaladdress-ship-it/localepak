@@ -6,6 +6,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { MapPin, Phone, MessageCircle, Globe, Facebook, Instagram, Youtube, ArrowLeft, Clock, Tag, Mail, Star, Send, Flag } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 
 // Round 4: Firebase/Firestore is loaded LAZILY via dynamic import()
 // inside the reviews effect and the submit handler below — never as a
@@ -233,7 +234,7 @@ export default function BusinessDetailPage({
       toast.success('Review submitted — it will appear after moderation.')
       setReviewForm({ name: '', rating: 0, text: '' })
     } catch (err: any) {
-      toast.error(`Could not submit your review: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit your review: ${safeErrorMessage(err)}`)
     } finally {
       setSubmittingReview(false)
     }
