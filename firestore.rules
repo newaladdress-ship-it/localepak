@@ -275,6 +275,15 @@ service cloud.firestore {
       allow read, update, delete: if isAdmin();
     }
 
+    // ---------- Site Settings (protection toggle) ----------
+    // Sirf ek doc: settings/site, jismein sirf protectionEnabled flag hai
+    // (koi sensitive data nahi). Public sirf is doc ko parh sakta hai taake
+    // guard ko toggle ki value mile; likhna sirf admin ka kaam hai.
+    match /settings/{docId} {
+      allow get: if docId == 'site';
+      allow write: if isAdmin();
+    }
+
     // ---------- Baaki sab collections: band ----------
     match /{document=**} {
       allow read, write: if false;
