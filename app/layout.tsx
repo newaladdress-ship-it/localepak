@@ -41,11 +41,13 @@ export const metadata: Metadata = {
     siteName: 'LocalePak',
     locale: 'en_PK',
     type: 'website',
+    images: ['https://www.localepak.com/logo.png'],
   },
   twitter: {
     card: 'summary_large_image',
     title: "Pakistan Business Directory – Find & List Businesses Free | LocalePak",
     description: "LocalePak is Pakistan's free business directory. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+    images: ['https://www.localepak.com/logo.png'],
   },
   robots: {
     index: true,
@@ -58,6 +60,8 @@ export const metadata: Metadata = {
     },
   },
 }
+
+export const viewport = { width: 'device-width', initialScale: 1 }
 
 export default function RootLayout({
   children,

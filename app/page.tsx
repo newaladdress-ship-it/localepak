@@ -46,7 +46,7 @@ const FAQS = [
   },
   {
     question: 'I run a business. How can I get listed?',
-    answer: 'Create a free account, then complete the Add Business form — eight short steps covering your contact details, category, city, opening hours, services and products. Our team reviews every submission, and once approved, your listing goes public with the next weekly release, and then appears on your city page, your category page and in search.'
+    answer: 'Create a free account, then complete the Add Business form — eight short steps covering your contact details, category, city, opening hours, services and products. Our team reviews every submission, and once approved, your listing goes live immediately, and then appears on your city page, your category page and in search.'
   }
 ]
 
@@ -177,19 +177,19 @@ export default function HomePage() {
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-3xl font-extrabold text-slate-900">100% free</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-slate-900">100% free</span>
                 <p className="text-xs font-semibold text-slate-500 mt-1">Browse & search at no cost</p>
               </div>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-3xl font-extrabold text-emerald-600">Every major city</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600">Every major city</span>
                 <p className="text-xs font-semibold text-slate-500 mt-1">Karachi · Lahore · Islamabad & more</p>
               </div>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-3xl font-extrabold text-emerald-600">24 categories</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-emerald-600">24 categories</span>
                 <p className="text-xs font-semibold text-slate-500 mt-1">From food to technology</p>
               </div>
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="text-3xl font-extrabold text-amber-500">Local guides</span>
+                <span className="text-2xl sm:text-3xl font-extrabold text-amber-500">Local guides</span>
                 <p className="text-xs font-semibold text-slate-500 mt-1">Choose providers with confidence</p>
               </div>
             </div>
@@ -314,7 +314,7 @@ export default function HomePage() {
               Put Your Business on LocalePak — Free
             </h2>
             <p className="text-slate-500 text-xs sm:text-sm">
-              Register in minutes, complete the eight-step Add Business form, and once approved, your listing goes public with the next weekly release, and then appears on your city page, your category page and in search.
+              Register in minutes, complete the eight-step Add Business form, and once approved, your listing goes live immediately, and then appears on your city page, your category page and in search.
             </p>
           </div>
 
@@ -489,7 +489,7 @@ export default function HomePage() {
                 Your Customers Are Searching. Be There.
               </h2>
               <p className="text-emerald-100 text-xs sm:text-sm leading-relaxed">
-                Create a free account and add your business in eight short steps. Once approved, your listing goes public with the next weekly release, and then appears in your category, your city and search.
+                Create a free account and add your business in eight short steps. Once approved, your listing goes live immediately, and then appears in your category, your city and search.
               </p>
             </div>
 
