@@ -27,6 +27,7 @@ const CORE_LINKS: { label: string; href: string }[] = [
   { label: 'All Cities', href: '/cities' },
   { label: 'All Businesses', href: '/businesses' },
   { label: 'All Companies', href: '/companies' },
+  { label: 'All Jobs', href: '/jobs' },
   { label: 'Add Your Business — Free', href: '/add-business' },
   { label: 'Add Your Company — Free', href: '/add-company' },
   { label: 'Post a Job — Free', href: '/add-job' },
