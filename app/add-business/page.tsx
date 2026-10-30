@@ -111,7 +111,7 @@ const STEP_TITLES = [
 ]
 
 const inputClass =
-  'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600'
+  'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600'
 const labelClass = 'block text-xs font-bold text-slate-700 mb-1'
 
 function isValidEmail(value: string): boolean {
@@ -328,7 +328,7 @@ export default function AddBusinessPage() {
       <>
         <Navbar />
         <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
-          <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl">
+          <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
             <PaymentScreen
               tier={tier}
               listingType="business"
@@ -361,7 +361,7 @@ export default function AddBusinessPage() {
     <>
       <Navbar />
       <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4">
-        <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 shadow-xl">
+        <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
           <div className="text-center mb-6">
             <div className="inline-flex p-3 rounded-2xl bg-emerald-50 text-emerald-600 mb-3">
               <Building2 className="w-8 h-8" />
@@ -568,7 +568,7 @@ export default function AddBusinessPage() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} placeholder="Product name" className={inputClass} />
-                  <input type="text" inputMode="decimal" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Price in Rs (numbers only, e.g. 350)" className="w-full sm:w-44 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-600" />
+                  <input type="text" inputMode="decimal" value={productPrice} onChange={(e) => setProductPrice(e.target.value)} placeholder="Price in Rs (numbers only, e.g. 350)" className="w-full sm:w-44 px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600" />
                   <button type="button" onClick={addProduct} className="shrink-0 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl flex items-center justify-center gap-1.5 cursor-pointer">
                     <Plus className="w-4 h-4" /> Add
                   </button>
@@ -699,7 +699,7 @@ export default function AddBusinessPage() {
 
                 <div className="flex gap-2.5 p-3.5 bg-emerald-50 border border-emerald-100 rounded-xl text-xs text-slate-600">
                   <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                  <span>Your listing goes through a quick review; once approved, it goes public with the next weekly release. After saving, you will pay for your plan and upload a payment screenshot — approval follows payment verification.</span>
+                  <span>Your listing goes through a quick review; once approved, it goes live immediately. After saving, you will pay for your plan and upload a payment screenshot — approval follows payment verification.</span>
                 </div>
 
                 <TierSelect value={tier} onChange={setTier} />
