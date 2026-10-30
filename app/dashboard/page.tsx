@@ -11,6 +11,7 @@ import { collection, query, where, getDocs, doc, getDoc, addDoc, updateDoc, serv
 import { compressImageToDataUrl } from '@/lib/compress-image'
 import { User as UserIcon, Mail, ShieldCheck, LogOut, LayoutGrid, MapPin, HelpCircle, Building2, Factory, Briefcase, PlusCircle, ClipboardList, Crown, BadgeCheck, X, Upload, ShieldAlert, UserRound, Pencil, FolderKanban, Newspaper, Wallet } from 'lucide-react'
 import { toast } from 'sonner'
+import { safeErrorMessage } from '@/lib/user-error'
 import { isReleased, releaseDateLabel } from '@/lib/release'
 import { notifyAdminNewPaymentProof, queueSubmissionEmails } from '@/lib/mail'
 import PaymentScreen from '@/components/payment-screen'
@@ -246,7 +247,7 @@ export default function DashboardPage() {
       setUpgradeFile(null)
       toast.success('Payment proof submitted — our admin will verify it shortly.')
     } catch (err: any) {
-      toast.error(`Upload failed: ${err?.message || 'Unknown error'}`)
+      toast.error(`Upload failed: ${safeErrorMessage(err)}`)
     } finally {
       setUploading(false)
     }
@@ -310,7 +311,7 @@ export default function DashboardPage() {
       setEditFor(null)
       toast.success('Edit request submitted — our team reviews it, then it goes live at the next weekly release.')
     } catch (err: any) {
-      toast.error(`Could not submit edit request: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit edit request: ${safeErrorMessage(err)}`)
     } finally {
       setEditSaving(false)
     }
@@ -343,7 +344,7 @@ export default function DashboardPage() {
       setProjectLink('')
       toast.success('Project added to your listing.')
     } catch (err: any) {
-      toast.error(`Could not add project: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not add project: ${safeErrorMessage(err)}`)
     } finally {
       setProjectSaving(false)
     }
@@ -360,7 +361,7 @@ export default function DashboardPage() {
       )
       toast.success('Project removed.')
     } catch (err: any) {
-      toast.error(`Could not remove project: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not remove project: ${safeErrorMessage(err)}`)
     } finally {
       setProjectSaving(false)
     }
@@ -415,7 +416,7 @@ export default function DashboardPage() {
       setBlogFormOpen(false)
       toast.success('Blog post submitted for review.')
     } catch (err: any) {
-      toast.error(`Could not submit blog post: ${err?.message || 'Unknown error'}`)
+      toast.error(`Could not submit blog post: ${safeErrorMessage(err)}`)
     } finally {
       setBlogSaving(false)
     }
