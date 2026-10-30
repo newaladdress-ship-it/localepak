@@ -42,10 +42,12 @@ export async function generateMetadata(props: {
   }
   const title = `${cat.name} in Pakistan – Directory | LocalePak`
   const description = `Find ${cat.name.toLowerCase()} across Pakistan's major cities: browse free listings, compare providers, and choose the right one with our local guide.`
+  const listings = await getCategoryCards(cat.id, cat.name)
   const canonical = `https://www.localepak.com/category/${cat.id}/`
   return {
     title,
     description,
+    ...(listings.length === 0 ? { robots: { index: false, follow: false } } : {}),
     alternates: { canonical },
     openGraph: { title, description, url: canonical, siteName: 'LocalePak', locale: 'en_PK', type: 'website' },
     twitter: { card: 'summary_large_image', title, description },
@@ -108,7 +110,7 @@ export default async function CategoryPage(props: {
               </h3>
               <p className="text-sm text-slate-500 max-w-md mx-auto">
                 This page is ready for its first {cat.name.toLowerCase()} listing. If you run one,
-                add it free and, once approved, your profile will appear here with the next weekly release.
+                add it free and, once approved, your profile will appear here immediately.
               </p>
               <Link
                 href="/add-business"
@@ -232,7 +234,7 @@ export default async function CategoryPage(props: {
 
         <OwnerCtaBand
           title={`Run a ${cat.name} business? Get listed free.`}
-          text={`Add your business to the ${cat.name} category: a free profile with call and WhatsApp buttons, hours, services and products — shown in your city and in search once approved, with the next weekly release.`}
+          text={`Add your business to the ${cat.name} category: a free profile with call and WhatsApp buttons, hours, services and products — shown in your city and in search as soon as it is approved.`}
           links={[
             { label: 'All businesses', href: '/businesses' },
             { label: 'All companies', href: '/companies' },
