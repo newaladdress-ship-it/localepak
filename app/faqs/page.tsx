@@ -22,7 +22,7 @@ const faqs = [
   },
   {
     q: "How long does business approval take?",
-    a: "Every submission is reviewed by our team before it appears publicly. We aim to check most submissions within a few working days, but that is an aim, not a guarantee — it can take longer when volume is high or when we need to clarify details with the owner. Once approved, your listing goes public with the next weekly release, and then appears on your city page, your category page and in search."
+    a: "Every submission is reviewed by our team before it appears publicly. We aim to check most submissions within a few working days, but that is an aim, not a guarantee — it can take longer when volume is high or when we need to clarify details with the owner. Once approved, your listing goes live immediately, and then appears on your city page, your category page and in search."
   },
   {
     q: "How do I get a Verified Business Badge on LocalePak?",
