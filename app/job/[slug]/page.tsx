@@ -22,7 +22,7 @@ import { applyPendingEdit } from '@/lib/edit-requests'
 // their dashboard; admins from the admin panel.
 
 // A newly approved job should appear without a rebuild.
-export const revalidate = 3600
+export const revalidate = 2592000
 
 /** One anonymous read per request, shared by metadata + page. */
 const loadJob = cache(async (slug: string): Promise<any | null> => {
