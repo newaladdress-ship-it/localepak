@@ -1,3 +1,17 @@
+import { readFileSync } from 'node:fs'
+
+// Seed slugs, generated from lib/seed-businesses.ts (same 116 slugs as
+// generateStaticParams in app/business/[slug]/page.tsx). Regenerate
+// lib/seed-slugs.json whenever the seed list changes. Used only for the
+// seed rewrites below; if the file is missing, rewrites are empty and
+// seed pages fall back to /business/[slug] (7-day window) — never a 404.
+let seedSlugs = []
+try {
+  seedSlugs = JSON.parse(readFileSync(new URL('./lib/seed-slugs.json', import.meta.url), 'utf8'))
+} catch {
+  seedSlugs = []
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   trailingSlash: true,
@@ -113,6 +127,21 @@ const nextConfig = {
         ],
       },
     ]
+  },
+
+  async rewrites() {
+    // Seed business pages: public URL stays /business/<slug>, but the
+    // request is served by the internal /seed-business/[slug] route,
+    // whose revalidate is 2 years (owner decision 2026-10-31). A route
+    // segment has only one revalidate value, so this split is what
+    // makes "detail 7 days, seed 1 year+" possible at all. Both slash
+    // variants are listed because trailingSlash is on. Firestore
+    // business slugs are NOT listed here, so they keep routing to
+    // /business/[slug] (7-day window) untouched.
+    return seedSlugs.flatMap((slug) => [
+      { source: `/business/${slug}`, destination: `/seed-business/${slug}` },
+      { source: `/business/${slug}/`, destination: `/seed-business/${slug}/` },
+    ])
   },
 
   async redirects() {
