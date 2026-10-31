@@ -10,7 +10,7 @@ import { isReleased } from '@/lib/release'
 // client search UI as initial data. The browser runs no Firestore list query for search, and the
 // index/filter interactions keep working on this server-provided set.
 // ISR refreshes the live set hourly (well inside the 7-day cycle).
-export const revalidate = 3600
+export const revalidate = 86400
 
 async function buildLiveItems(): Promise<Result[]> {
   const items: Result[] = []
