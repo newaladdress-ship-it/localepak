@@ -10,6 +10,7 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { RejectPanel, DeletePanel, moderateReject, moderateDelete } from '@/components/admin-moderation'
 import { resolveOwnerEmails } from '@/lib/owner-contact'
 import { queueListingApprovedEmail } from '@/lib/mail'
+import { revalidateApprovedListing } from '@/lib/revalidate'
 import { tierLabel } from '@/lib/tiers'
 
 type Item = { id: string; data: any }
@@ -76,7 +77,11 @@ export default function AdminProfessionalsPage() {
       item.id,
       { status: 'approved', rejectionReasons: [], rejectionNote: '', rejectedAt: null },
       'Professional profile approved (any previous rejection cleared). It is now live.',
-      () => queueListingApprovedEmail(COL, item)
+      // Then refresh the profile's public pages immediately (lib/revalidate.ts).
+async () => {
+  await queueListingApprovedEmail(COL, item)
+  await revalidateApprovedListing({ kind: 'professional', slug: item.data.slug })
+}
     )
   }
 
