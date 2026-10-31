@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // the grid is part of the initial HTML and no Firestore list query
 // ever runs in a visitor's browser (anti-scrape). Jobs have no
 // release cycle — approved posts are public immediately.
-export const revalidate = 3600
+export const revalidate = 86400
 
 export default async function JobsPage() {
   const jobs = await getApprovedJobCards()
