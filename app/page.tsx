@@ -90,7 +90,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium">
-                From Karachi to Khyber — explore Pakistan's cities and business categories, compare local services with our guides, and find exactly what you need near you.
+                From Karachi to Khyber, explore Pakistan's cities and business categories, compare local services with our guides, and find exactly what you need near you.
               </p>
             </div>
 
