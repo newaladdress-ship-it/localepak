@@ -33,7 +33,7 @@ export async function generateMetadata(): Promise<Metadata> {
 // list query ever runs in a visitor's browser (anti-scrape).
 // Professionals have no weekly release cycle — approved profiles are
 // public immediately, as companies are.
-export const revalidate = 3600
+export const revalidate = 86400
 
 export default async function ProfessionalsPage() {
   const professionals = await getApprovedProfessionalCards()
