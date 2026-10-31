@@ -110,7 +110,7 @@ export async function fetchApprovedJobs(): Promise<ListingDoc[]> {
 export async function fetchJobBySlug(slug: string): Promise<ListingDoc | null> {
   if (isDummyFirebase) return null
   try {
-    const snap = await getDocs(query(collection(db, 'jobs'), where('slug', '==', slug), limit(1)))
+    const snap = await getDocs(query(collection(db, 'jobs'), where('slug', '==', slug), where('status', '==', 'approved'), limit(1)))
     if (snap.empty) return null
     const d = snap.docs[0]
     return { id: d.id, data: serializeValue(d.data()) }
@@ -150,7 +150,7 @@ export async function getApprovedJobCards(): Promise<PublicJobCard[]> {
 export async function fetchBusinessBySlug(slug: string): Promise<ListingDoc | null> {
   if (isDummyFirebase) return null
   try {
-    const snap = await getDocs(query(collection(db, 'businesses'), where('slug', '==', slug), limit(1)))
+    const snap = await getDocs(query(collection(db, 'businesses'), where('slug', '==', slug), where('status', '==', 'approved'), limit(1)))
     if (snap.empty) return null
     const d = snap.docs[0]
     return { id: d.id, data: serializeValue(d.data()) }
@@ -163,7 +163,7 @@ export async function fetchBusinessBySlug(slug: string): Promise<ListingDoc | nu
 export async function fetchCompanyBySlug(slug: string): Promise<ListingDoc | null> {
   if (isDummyFirebase) return null
   try {
-    const snap = await getDocs(query(collection(db, 'companies'), where('slug', '==', slug), limit(1)))
+    const snap = await getDocs(query(collection(db, 'companies'), where('slug', '==', slug), where('status', '==', 'approved'), limit(1)))
     if (snap.empty) return null
     const d = snap.docs[0]
     return { id: d.id, data: serializeValue(d.data()) }
@@ -213,7 +213,7 @@ export async function getApprovedCompanyCards(): Promise<PublicCompanyCard[]> {
 export async function fetchProfessionalBySlug(slug: string): Promise<ListingDoc | null> {
   if (isDummyFirebase) return null
   try {
-    const snap = await getDocs(query(collection(db, 'professionals'), where('slug', '==', slug), limit(1)))
+    const snap = await getDocs(query(collection(db, 'professionals'), where('slug', '==', slug), where('status', '==', 'approved'), limit(1)))
     if (snap.empty) return null
     const d = snap.docs[0]
     return { id: d.id, data: serializeValue(d.data()) }
