@@ -92,6 +92,7 @@ export default function AdminPaymentsPage() {
                                             } catch {
             // Best effort — the approval itself already succeeded.
           }
+        }
         await updateDoc(doc(db, 'payment_proofs', id), {
           status: 'approved',
           reviewedAt: serverTimestamp(),
@@ -123,6 +124,7 @@ export default function AdminPaymentsPage() {
       }} catch {
           // Best effort — the approval itself already succeeded.
         }
+      }
       await updateDoc(doc(db, 'payment_proofs', id), {
         status: 'approved',
         reviewedAt: serverTimestamp(),
