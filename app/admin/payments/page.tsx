@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { db } from '@/lib/firebase'
-import { collection, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
+import { collection, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { toast } from 'sonner'
 import { ExternalLink } from 'lucide-react'
 import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBtn } from '@/components/admin-shared'
 import { queuePaymentApprovedEmail } from '@/lib/mail'
+import { revalidateApprovedListing } from '@/lib/revalidate'
 
 type Item = { id: string; data: any }
 
@@ -48,10 +49,10 @@ export default function AdminPaymentsPage() {
     try {
       // Tier payment (new paid-listing flow): verifying the proof ALSO
       // approves the listing itself — that is the owner's "authenticate
-      // then approve" step. Businesses join the weekly release batch
-      // via approvedAt (lib/release.ts); everything else goes live
-      // at once. Legacy upgrade proofs (plan, no tier) keep the old
-      // behaviour: they only switch the Featured/Verified flag.
+      // then approve" step. Listings go live at once (release cycle
+      // paused, lib/release.ts). Legacy upgrade proofs (plan, no tier)
+      // keep the old behaviour: they only switch the Featured/Verified
+      // flag.
       if (data.tier) {
         const listingCol =
           data.listingType === 'company'
@@ -70,7 +71,27 @@ export default function AdminPaymentsPage() {
             rejectionReasons: [],
             rejectionNote: '',
           })
-        }
+          // Refresh the listing's public pages immediately so the
+          // approval is visible at once (lib/revalidate.ts).
+          try {
+            const listingSnap = await getDoc(doc(db, listingCol, data.listingId))
+            const ld = listingSnap.data() || {}
+            await revalidateApprovedListing({
+              kind:
+                listingCol === 'companies'
+              ? 'company'
+                : listingCol === 'jobs'
+              ? 'job'
+                : listingCol === 'professionals'
+              ? 'professional'
+                : 'business',
+              slug: ld.slug,
+              category: ld.category || ld.mainCategory,
+              city: ld.city,
+                      }
+                                            } catch {
+            // Best effort — the approval itself already succeeded.
+          }
         await updateDoc(doc(db, 'payment_proofs', id), {
           status: 'approved',
           reviewedAt: serverTimestamp(),
@@ -88,7 +109,20 @@ export default function AdminPaymentsPage() {
       const flag = data.plan === 'verified' ? { verified: true } : { featured: true }
       if (data.listingId) {
         await updateDoc(doc(db, listingCol, data.listingId), flag)
-      }
+        // Refresh the listing's public pages so the flag change shows
+        // at once instead of waiting out the ISR window.
+        try {
+          const listingSnap = await getDoc(doc(db, listingCol, data.listingId))
+          const ld = listingSnap.data() || {}
+          await revalidateApprovedListing({
+            kind: listingCol === 'companies' ? 'company' : 'business',
+            slug: ld.slug,
+            category: ld.category || ld.mainCategory,
+           city: ld.city,
+            
+      }} catch {
+          // Best effort — the approval itself already succeeded.
+        }
       await updateDoc(doc(db, 'payment_proofs', id), {
         status: 'approved',
         reviewedAt: serverTimestamp(),
