@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { BookOpen, Clock, ArrowRight, Sparkles, TrendingUp, ShieldCheck, Briefcase, FileText, CheckCircle2 } from 'lucide-react'
 import { getApprovedUserBlogPosts } from '@/lib/public-listings'
 
-export const revalidate = 3600
+export const revalidate = 86400
 
 export const metadata: Metadata = {
   title: 'LocalePak Blog: Free Listing Tips & Pakistan Business Guides',
