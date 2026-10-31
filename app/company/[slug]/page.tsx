@@ -24,8 +24,9 @@ import { isValidProject, type Project } from '@/lib/tiers'
 // visitor could see it: status 'approved'. Owners manage pending
 // companies from their dashboard; admins from the admin panel.
 
-// A newly approved company should appear without a rebuild.
-export const revalidate = 2592000
+// Company profiles refresh at most every 7 days (owner decision
+// 2026-10-31); approvals refresh instantly via on-demand revalidation.
+export const revalidate = 604800
 
 /** One anonymous read per request, shared by metadata + page. */
 const loadCompany = cache(async (slug: string): Promise<any | null> => {
