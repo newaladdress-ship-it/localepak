@@ -12,7 +12,7 @@ import {
 import { BLOG_POSTS } from '@/lib/blog-data'
 import { fetchUserBlogPostBySlug } from '@/lib/public-listings'
 
-export const revalidate = 86400
+export const revalidate = 2592000
 
 // Meta spec: titles 50-65 chars, descriptions 120-158 chars.
 // BLOG_POSTS metaTitles (51-77 chars) and metaDescriptions (137-199 chars)
