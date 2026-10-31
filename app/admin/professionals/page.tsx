@@ -78,10 +78,10 @@ export default function AdminProfessionalsPage() {
       { status: 'approved', rejectionReasons: [], rejectionNote: '', rejectedAt: null },
       'Professional profile approved (any previous rejection cleared). It is now live.',
       // Then refresh the profile's public pages immediately (lib/revalidate.ts).
-async () => {
-  await queueListingApprovedEmail(COL, item)
-  await revalidateApprovedListing({ kind: 'professional', slug: item.data.slug })
-}
+      async () => {
+        await queueListingApprovedEmail(COL, item)
+        await revalidateApprovedListing({ kind: 'professional', slug: item.data.slug })
+      }
     )
   }
 
