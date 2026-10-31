@@ -10,6 +10,7 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { RejectPanel, DeletePanel, moderateReject, moderateDelete } from '@/components/admin-moderation'
 import { resolveOwnerEmails } from '@/lib/owner-contact'
 import { queueListingApprovedEmail } from '@/lib/mail'
+import { revalidateApprovedListing } from '@/lib/revalidate'
 
 type Item = { id: string; data: any }
 const TABS = ['all', 'pending', 'approved', 'rejected'] as const
@@ -79,8 +80,12 @@ export default function AdminCompaniesPage() {
       item.id,
       { status: 'approved', rejectionReasons: [], rejectionNote: '', rejectedAt: null },
       'Company approved (any previous rejection cleared).',
-      // Owner approval email ("live now") — queued only.
-      () => queueListingApprovedEmail(COL, item)
+      // Owner approval email ("live now") — queued only. Then refresh
+      // the company's public pages immediately (lib/revalidate.ts).
+      async () => {
+        await queueListingApprovedEmail(COL, item)
+        await revalidateApprovedListing({ kind: 'company', slug: item.data.slug })
+      }
     )
   }
 
