@@ -33,7 +33,7 @@ import { applyPendingEdit } from '@/lib/edit-requests'
 export const dynamicParams = true
 
 // A newly approved/released listing should appear without a rebuild.
-export const revalidate = 3600
+export const revalidate = 2592000
 
 export function generateStaticParams() {
   return SEED_BUSINESSES.map((b) => ({ slug: b.slug }))
