@@ -14,7 +14,7 @@ import MarkdownContent from '@/components/seo/markdown-content'
 import { getCityCards } from '@/lib/public-listings'
 import { MapPin, Building2, Phone, ArrowRight } from 'lucide-react'
 
-export const revalidate = 3600
+export const revalidate = 2592000
 
 // Shared between generateMetadata and the page component so the
 // merged city listings are fetched once per render, not twice.
