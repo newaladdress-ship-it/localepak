@@ -25,7 +25,7 @@ import { isValidProject, type Project } from '@/lib/tiers'
 // companies from their dashboard; admins from the admin panel.
 
 // A newly approved company should appear without a rebuild.
-export const revalidate = 3600
+export const revalidate = 2592000
 
 /** One anonymous read per request, shared by metadata + page. */
 const loadCompany = cache(async (slug: string): Promise<any | null> => {
