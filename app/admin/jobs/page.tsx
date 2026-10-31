@@ -10,6 +10,7 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { RejectPanel, DeletePanel, moderateReject, moderateDelete } from '@/components/admin-moderation'
 import { resolveOwnerEmails } from '@/lib/owner-contact'
 import { queueListingApprovedEmail } from '@/lib/mail'
+import { revalidateApprovedListing } from '@/lib/revalidate'
 
 type Item = { id: string; data: any }
 const TABS = ['all', 'pending', 'approved', 'rejected'] as const
@@ -60,6 +61,8 @@ export default function AdminJobsPage() {
       setItems((prev) => prev.map((it) => (it.id === item.id ? { ...it, data: { ...it.data, ...fields } } : it)))
       // Owner approval email ("live now") — queued only, never throws.
       await queueListingApprovedEmail(COL, item)
+      // Refresh the job's public pages immediately (detail + index).
+      await revalidateApprovedListing({ kind: 'job', slug: item.data.slug })
       toast.success('Job approved (any previous rejection cleared).')
     } catch {
       toast.error('Action failed — check permissions and try again.')
