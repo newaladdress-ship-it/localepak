@@ -11,15 +11,19 @@ import { applyPendingEdit } from '@/lib/edit-requests'
 
 // Business detail route — two kinds of listings:
 // 1. SEED listings (lib/seed-businesses.ts): directory-created pages for
-//    real businesses. They are listed in generateStaticParams, so
-//    they are prerendered to fully static HTML at build time — zero
-//    Firestore reads and no ISR (this file sets no `revalidate` for
-//    them; the revalidate below covers Firestore listings only).
+//    real businesses. Their public URLs (/business/<slug>) are rewritten
+//    in next.config.mjs to the dedicated /seed-business/[slug] route,
+//    which carries a 2-year revalidate — seed data only ever changes
+//    via a code deploy (which rebuilds them anyway), so they never
+//    need a short ISR window. They are still listed in
+//    generateStaticParams here as a fallback, so a missed rewrite
+//    still renders the seed page instead of a 404.
 // 2. FIRESTORE listings (owner-added via the dashboard): any other slug
 //    is fetched HERE, on the server, and handed to the client island
 //    as props: the profile renders into the initial HTML and the
 //    browser makes no Firestore read for it. Only the interactive
-//    parts (reviews) still run client-side.
+//    parts (reviews) still run client-side. The revalidate below
+//    covers these Firestore listings only.
 //
 //    Note the public URL now reflects PUBLIC visibility only: the
 //    server reads anonymously, so a Firestore listing appears here
@@ -32,8 +36,10 @@ import { applyPendingEdit } from '@/lib/edit-requests'
 
 export const dynamicParams = true
 
-// A newly approved/released listing should appear without a rebuild.
-export const revalidate = 2592000
+// Firestore listings refresh at most every 7 days (owner decision
+// 2026-10-31); approvals refresh instantly via on-demand revalidation
+// (lib/revalidate.ts), and seed listings use the 2-year route instead.
+export const revalidate = 604800
 
 export function generateStaticParams() {
   return SEED_BUSINESSES.map((b) => ({ slug: b.slug }))
