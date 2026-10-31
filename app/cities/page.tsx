@@ -14,7 +14,7 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-export const revalidate = 3600
+export const revalidate = 2592000
 
 export const metadata: Metadata = {
   title: 'Cities Directory Pakistan | LocalePak Enterprise Hub',
