@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 // the page is visible). Companies have no weekly release cycle —
 // approved companies are public immediately, as before.
 // ISR keeps the data fresh without a read per visitor.
-export const revalidate = 3600
+export const revalidate = 86400
 
 export default async function CompaniesPage() {
   const companies = await getApprovedCompanyCards()
