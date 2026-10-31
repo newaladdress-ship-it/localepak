@@ -17,7 +17,9 @@ import { isValidProject, type Project } from '@/lib/tiers'
 // passed their 7-day boundary are merged onto the stored profile
 // before rendering (lib/edit-requests.ts).
 
-export const revalidate = 2592000
+// Professional profiles refresh at most every 7 days (owner decision
+// 2026-10-31); approvals refresh instantly via on-demand revalidation.
+export const revalidate = 604800
 
 /** One anonymous read per request, shared by metadata + page. */
 const loadProfessional = cache(async (slug: string): Promise<any | null> => {
