@@ -10,6 +10,7 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { RejectPanel, DeletePanel, moderateReject, moderateDelete } from '@/components/admin-moderation'
 import { resolveOwnerEmails } from '@/lib/owner-contact'
 import { queueListingApprovedEmail } from '@/lib/mail'
+import { revalidateApprovedListing } from '@/lib/revalidate'
 
 type Item = { id: string; data: any }
 const TABS = ['all', 'pending', 'approved', 'rejected'] as const
@@ -78,12 +79,22 @@ export default function AdminBusinessesPage() {
     return patch(
       item.id,
       // approvedAt stamps WHEN the approval happened; public visibility
-      // follows the weekly release cycle (see lib/release.ts) — an approved
-      // business goes live at the next cycle boundary, not immediately.
+      // is live now (release cycle paused, see lib/release.ts) and the
+      // public pages are refreshed immediately (lib/revalidate.ts).
       { status: 'approved', approvedAt: serverTimestamp(), rejectionReasons: [], rejectionNote: '', rejectedAt: null },
       'Business approved (any previous rejection cleared). It is live now.',
-      // Owner approval email (states the actual release date) — queued only.
-      () => queueListingApprovedEmail(COL, item)
+      // Owner approval email — queued only. Then refresh the listing's
+      // public pages immediately so the approval is visible at once
+      // instead of waiting out the ISR window (lib/revalidate.ts).
+      async () => {
+        await queueListingApprovedEmail(COL, item)
+        await revalidateApprovedListing({
+          kind: 'business',
+          slug: item.data.slug,
+          category: item.data.category || item.data.mainCategory,
+          city: item.data.city,
+        })
+      }
     )
   }
 
