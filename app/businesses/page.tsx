@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 // downloadable; only what is rendered on the page is visible).
 // ISR keeps the data fresh without a read per visitor; the weekly
 // release cycle makes an hourly refresh more than sufficient.
-export const revalidate = 3600
+export const revalidate = 86400
 
 export default async function BusinessesPage() {
   const businesses = await getMergedBusinessCards()
