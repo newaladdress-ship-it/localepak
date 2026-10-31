@@ -79,17 +79,17 @@ export default function AdminPaymentsPage() {
             await revalidateApprovedListing({
               kind:
                 listingCol === 'companies'
-              ? 'company'
-                : listingCol === 'jobs'
-              ? 'job'
-                : listingCol === 'professionals'
-              ? 'professional'
-                : 'business',
+                  ? 'company'
+                  : listingCol === 'jobs'
+                    ? 'job'
+                    : listingCol === 'professionals'
+                      ? 'professional'
+                      : 'business',
               slug: ld.slug,
               category: ld.category || ld.mainCategory,
               city: ld.city,
-                      }
-                                            } catch {
+            })
+          } catch {
             // Best effort — the approval itself already succeeded.
           }
         }
@@ -119,9 +119,9 @@ export default function AdminPaymentsPage() {
             kind: listingCol === 'companies' ? 'company' : 'business',
             slug: ld.slug,
             category: ld.category || ld.mainCategory,
-           city: ld.city,
-            
-      }} catch {
+            city: ld.city,
+          })
+        } catch {
           // Best effort — the approval itself already succeeded.
         }
       }
