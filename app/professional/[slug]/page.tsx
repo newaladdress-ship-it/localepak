@@ -17,7 +17,7 @@ import { isValidProject, type Project } from '@/lib/tiers'
 // passed their 7-day boundary are merged onto the stored profile
 // before rendering (lib/edit-requests.ts).
 
-export const revalidate = 3600
+export const revalidate = 2592000
 
 /** One anonymous read per request, shared by metadata + page. */
 const loadProfessional = cache(async (slug: string): Promise<any | null> => {
