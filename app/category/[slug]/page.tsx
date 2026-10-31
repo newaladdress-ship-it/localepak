@@ -26,7 +26,7 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-export const revalidate = 3600
+export const revalidate = 2592000
 
 export function generateStaticParams() {
   return CATEGORIES.map(cat => ({ slug: cat.id }))
