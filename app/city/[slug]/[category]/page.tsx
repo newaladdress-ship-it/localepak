@@ -29,7 +29,7 @@ export const dynamicParams = true
 
 // Listings are fetched server-side (Round 3); ISR refreshes the merged
 // seed + Firestore grid hourly — far inside the 7-day release cycle.
-export const revalidate = 3600
+export const revalidate = 2592000
 
 export function generateStaticParams() {
   return TOP_CITIES.flatMap(city =>
