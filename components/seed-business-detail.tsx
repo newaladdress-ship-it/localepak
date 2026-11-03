@@ -191,7 +191,7 @@ export default function SeedBusinessDetail({ business }: { business: SeedBusines
         </div>
       </main>
 
-      <Footer />
+      ooter hideSitePhone />
     </div>
   )
 }
