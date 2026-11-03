@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { ShieldCheck, MapPin, Briefcase, Sparkles, Phone, Mail, HelpCircle, FileText, Globe } from 'lucide-react'
 import UniversalHelpBanner from '@/components/universal-help-banner'
 
-export default function Footer() {
+export default function Footer({ hideSitePhone = false }: { hideSitePhone?: boolean }) {
   return (
     <>
       <UniversalHelpBanner />
@@ -33,10 +33,14 @@ export default function Footer() {
                 <MapPin className="w-3.5 h-3.5 text-red-500 shrink-0" />
                 <span><strong>Official HQ Address:</strong> Office 303, Evacuee Trust Complex, F-5/1, Islamabad 44000, Pakistan</span>
               </div>
-              <div className="flex items-center gap-2">
+              {/* Site phone hidden on listing detail pages: visitors were
+                  calling LocalePak's number thinking it was the business's. */}
+              {!hideSitePhone && (
+      <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span><strong>Phone Contact:</strong> +92 334 5636230</span>
               </div>
+      )}
             </div>
           </div>
 
