@@ -593,7 +593,7 @@ export default function BusinessDetailPage({
         )}
       </main>
 
-      <Footer />
+      <Footer hideSitePhone />
     </div>
   )
 }
