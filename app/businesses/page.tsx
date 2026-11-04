@@ -48,6 +48,12 @@ export default async function BusinessesPage() {
           <p className="text-slate-400 text-sm">
             Browse approved local businesses across Pakistan — call or WhatsApp them directly, no middleman.
           </p>
+          <p className="text-slate-400 text-xs">
+            Looking for one business by name?{' '}
+            <Link href="/businesses/a-z" prefetch={false} className="font-bold text-emerald-400 hover:text-emerald-300">
+              Browse the A–Z index
+            </Link>
+          </p>
         </div>
       </section>
 
