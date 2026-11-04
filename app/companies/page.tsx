@@ -6,14 +6,14 @@ import { Factory, MapPin, Phone, ArrowRight } from 'lucide-react'
 import { getApprovedCompanyCards } from '@/lib/public-listings'
 
 export const metadata: Metadata = {
-  title: 'Companies in Pakistan – Find & Contact Firms | LocalePak',
-  description: 'Find approved companies across Pakistan — manufacturers, suppliers and service providers — compare profiles and contact firms directly for quotes and jobs.',
+  title: 'Companies in Pakistan – List of Companies, Suppliers & Manufacturers | LocalePak',
+  description: 'A list of companies in Pakistan — manufacturers, suppliers, exporters and service providers. Find approved firms, compare profiles and contact companies directly for products, quotes and jobs.',
   alternates: {
     canonical: 'https://www.localepak.com/companies/',
   },
   openGraph: {
-    title: 'Companies in Pakistan – Find & Contact Firms | LocalePak',
-    description: 'Find approved companies across Pakistan — manufacturers, suppliers and service providers — compare profiles and contact firms directly for quotes and jobs.',
+    title: 'Companies in Pakistan – List of Companies, Suppliers & Manufacturers | LocalePak',
+    description: 'A list of companies in Pakistan — manufacturers, suppliers, exporters and service providers. Find approved firms, compare profiles and contact companies directly for products, quotes and jobs.',
     url: 'https://www.localepak.com/companies/',
     siteName: 'LocalePak',
     locale: 'en_PK',
@@ -46,12 +46,19 @@ export default async function CompaniesPage() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Companies in Pakistan</h1>
           <p className="text-slate-400 text-sm">
-            Browse approved companies across Pakistan — manufacturers, suppliers, and service providers you can contact directly.
+            Browse approved companies across Pakistan — manufacturers, suppliers, exporters and service providers you can contact directly for products, quotes and jobs.
           </p>
         </div>
       </section>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
+        <p className="text-sm text-slate-500 max-w-3xl mb-8">
+          For buyers and trade enquiries: use this list of companies to find a manufacturer or supplier, check what each firm offers, and contact it directly. Firms in the manufacturing sector are also listed under{' '}
+          <Link href="/category/manufacturing" className="font-bold text-emerald-600 hover:text-emerald-700">
+            Manufacturing & Industrial
+          </Link>
+          .
+        </p>
         {companies.length === 0 ? (
           <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center space-y-4">
             <Factory className="w-10 h-10 text-slate-300 mx-auto" />
