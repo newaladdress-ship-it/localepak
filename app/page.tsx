@@ -12,13 +12,13 @@ import { BLOG_POSTS } from '@/lib/blog-data'
 
 export const metadata: Metadata = {
   title: "Pakistan Business Directory – Find & List Free | LocalePak",
-  description: "LocalePak is Pakistan's free business directory. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+  description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
   alternates: {
     canonical: 'https://www.localepak.com/',
   },
   openGraph: {
     title: "Pakistan Business Directory – Find & List Free | LocalePak",
-    description: "LocalePak is Pakistan's free business directory. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+    description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
     url: 'https://www.localepak.com/',
     siteName: 'LocalePak',
     locale: 'en_PK',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Pakistan Business Directory – Find & List Free | LocalePak",
-    description: "LocalePak is Pakistan's free business directory. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+    description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
   },
 }
 
@@ -43,6 +43,10 @@ const FAQS = [
   {
     question: 'Which cities and categories does LocalePak cover?',
     answer: 'LocalePak has guides for cities across Pakistan — including Karachi, Lahore, Islamabad, Rawalpindi, Faisalabad, Multan and Peshawar — and covers categories from restaurants and real estate to technology, healthcare, home services and more.'
+  },
+  {
+    question: 'Is LocalePak the yellow pages of Pakistan?',
+    answer: 'LocalePak is a modern online business directory for Pakistan — the online equivalent of the traditional yellow pages. It lists companies, suppliers and local services by city and category, with contact details so you can call or message a business directly, instead of flipping through a printed directory.'
   },
   {
     question: 'I run a business. How can I get listed?',
