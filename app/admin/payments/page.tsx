@@ -280,7 +280,7 @@ export default function AdminPaymentsPage() {
                     Owner: {data.ownerEmail || '—'} · Submitted {formatDate(data.createdAt)}
                     {data.reviewedAt ? ` · Reviewed ${formatDate(data.reviewedAt)}` : ''}
                   </p>
-                  {item.listing?.status === 'rejected' && ({
+                  {item.listing?.status === 'rejected' && (
                 <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
                   New proof for a previously rejected listing
                 {(item.listing.rejectionReasons?.length > 0 || item.listing.rejectionNote) &&
