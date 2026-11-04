@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { db } from '@/lib/firebase'
 import { collection, getDocs, doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { toast } from 'sonner'
@@ -9,7 +10,23 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { queuePaymentApprovedEmail } from '@/lib/mail'
 import { revalidateApprovedListing } from '@/lib/revalidate'
 
-type Item = { id: string; data: any }
+type Item = { id: string; data: any; listing?: any }
+
+// Collection + admin list page for a proof's listing type, so a proof
+// uploaded against a rejected listing can be shown WITH that listing's
+// rejection context (and linked back to it) instead of as a bare name.
+const LISTING_COL: Record<string, string> = {
+  company: 'companies',
+  job: 'jobs',
+  professional: 'professionals',
+  business: 'businesses',
+}
+const LISTING_ADMIN_PAGE: Record<string, string> = {
+  company: '/admin/companies',
+  job: '/admin/jobs',
+  professional: '/admin/professionals',
+  business: '/admin/businesses',
+}
 
 export default function AdminPaymentsPage() {
   const [items, setItems] = useState<Item[]>([])
@@ -26,11 +43,39 @@ export default function AdminPaymentsPage() {
         const snap = await getDocs(collection(db, 'payment_proofs'))
         const rows: Item[] = []
         snap.forEach((d) => rows.push({ id: d.id, data: d.data() }))
-        // Pending first, then newest first within each status.
+        // Attach each proof's listing (best effort — a missing listing
+        // must never break the proofs list) so proofs re-uploaded
+        // against a REJECTED listing carry that context on the card.
+        await Promise.all(
+            rows.map(async (row) => {
+                const col = LISTING_COL[row.data.listingType] || 'businesses'
+              if (!row.data.listingId) return
+              try {
+                const lsnap = await getDoc(db, col, row.data.listingId)
+                if (lsnap.exists()) {
+                    const ld = lsnap.data() as any
+                  row.listing = {
+                      status: ld.status || 'pending',
+                    rejectionReasons: Array.isArray(ld.rejectionReasons) ? ld.rejectionReasons : [],
+                    rejectionNote: ld.rejectionNote || '',
+                    slug: ld.slug || '',
+                  }
+                }
+              } catch {
+                  // Listing unreadable — proof still shows without context.
+              }
+            })
+      )
+        // Pending first; within pending, proofs for rejected listings
+        // first (those are re-uploads an admin can approve straight
+        // into a live listing); then newest first within each group.
         const rank = (s: string) => (s === 'pending' ? 0 : s === 'approved' ? 1 : 2)
         rows.sort((a, b) => {
           const r = rank(a.data.status || 'pending') - rank(b.data.status || 'pending')
           if (r !== 0) return r
+          const ra = a.listing?.status === 'rejected' ? 0: 1
+          const rb = b.listing?.status === 'rejected' ? 0: 1
+          if (ra !== rb) return ra - rb
           return (b.data.createdAt?.toMillis?.() || 0) - (a.data.createdAt?.toMillis?.() || 0)
         })
         setItems(rows)
@@ -70,6 +115,7 @@ export default function AdminPaymentsPage() {
             approvedAt: serverTimestamp(),
             rejectionReasons: [],
             rejectionNote: '',
+            rejectedAt: null,
           })
           // Refresh the listing's public pages immediately so the
           // approval is visible at once (lib/revalidate.ts).
@@ -234,9 +280,20 @@ export default function AdminPaymentsPage() {
                     Owner: {data.ownerEmail || '—'} · Submitted {formatDate(data.createdAt)}
                     {data.reviewedAt ? ` · Reviewed ${formatDate(data.reviewedAt)}` : ''}
                   </p>
-                  {data.adminNote && status === 'rejected' && (
-                    <p className="text-xs text-red-600">Admin note: {data.adminNote}</p>
+                  {item.listing?.status === 'rejected' && ({
+                <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                  New proof for a previously rejected listing
+                {(item.listing.rejectionReasons?.length > 0 || item.listing.rejectionNote) &&
+                  ` — rejected for: ${[...(item.listing.rejectionReasons || []), item.listing.rejectionNote].filter(Boolean).join(' · ')}`
+                {' '}· Approving this proof also approves this same listing.{' '}
+                  <Link href={LISTING_ADMIN_PAGE[data.listingType] || '/admin/businesses'} className="underline underline-off
+                      View in {data.listingType === 'company'? 'Companies': data.listingType === 'job'? 'Jobs': data.listingType === 'professional'? 'Professionals': 'Businesses'}
+                    </Link>
+                    </p>
                   )}
+                    {data.adminNote && status === 'rejected' && (
+                      <p className="text-xs text-red-600">Admin note: {data.adminNote}</p>
+            )}
                   {status === 'pending' && (
                     <div className="flex flex-col sm:flex-row gap-2 pt-2">
                       <button type="button" disabled={busy === id} onClick={() => approve(item)} className={approveBtn}>
