@@ -10,7 +10,7 @@ import { CITIES, CATEGORIES, TOP_CITIES } from '@/lib/data'
 import { CITY_INFO, generateCityCategoryContent } from '@/lib/seo-content'
 import MarkdownContent from '@/components/seo/markdown-content'
 import CityCategoryListings from './listings'
-import { getCityCategoryCards } from '@/lib/public-listings'
+import { getCityCategoryCards, getApprovedReviewAverages, getTopRatedCards } from '@/lib/public-listings'
 import { MapPin, Building2, ArrowRight } from 'lucide-react'
 
 function cityToSlug(name: string): string {
@@ -45,6 +45,7 @@ const getCachedCityCategoryCards = cache((
   categoryId: string,
   categoryName: string
 ) => getCityCategoryCards({ city, citySlug, categoryId, categoryName }))
+const getCachedReviewAverages = cache(() => getApprovedReviewAverages())
 
 function cityCategoryTitle(categoryName: string, city: string): string {
   const long = `${categoryName} in ${city}: Find Contacts & Services | LocalePak`
@@ -103,6 +104,8 @@ export default async function CityCategoryPage(props: {
 
   const citySlug = cityToSlug(city)
   const listings = await getCachedCityCategoryCards(city, citySlug, cat.id, cat.name)
+  const averages = await getCachedReviewAverages()
+  const topRated = getTopRatedCards(listings, averages)
   const info = CITY_INFO[city]
   const guide = generateCityCategoryContent(city, cat.id)
   const otherCategories = CATEGORIES.filter(c => c.id !== cat.id).slice(0, 8)
@@ -155,6 +158,46 @@ export default async function CityCategoryPage(props: {
           </h2>
           <CityCategoryListings businesses={listings} city={city} categoryName={cat.name} />
         </section>
+
+        {/* Top rated in this city × category (Gap 1) — rendered ONLY
+            when real approved reviews exist for these listings. */}
+        {topRated.length > 0 && (
+          <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              Top rated {cat.name} in {city}
+            </h2>
+            <p className="text-sm text-slate-500">
+              The highest-rated {cat.name.toLowerCase()} businesses in {city}, ranked by their approved customer reviews.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {topRated.map(biz => (
+                <article key={biz.id} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs hover:shadow-lg transition-all flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-extrabold text-slate-900 leading-snug">{biz.name}</h3>
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-[11px] font-bold">
+                      ★ {biz.avgRating.toFixed(1)} · {biz.reviewCount} review{biz.reviewCount === 1 ? '' : 's'}
+                    </span>
+                  </div>
+                  {biz.phone && (
+                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600" /> {biz.city}
+                    </p>
+                  )}
+                  {biz.description && (
+                    <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{biz.description}</p>
+                  )}
+                  <Link
+                    href={`/business/${biz.slug}`}
+                    prefetch={false}
+                    className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700"
+                  >
+                    View Business <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Guide */}
         <section className="bg-white py-14 px-4 sm:px-6 lg:px-8 border-y border-slate-200/80">
