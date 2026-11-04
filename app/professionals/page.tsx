@@ -9,7 +9,7 @@ import ProfessionalCard from '@/components/professional-card'
 export async function generateMetadata(): Promise<Metadata> {
   const professionals = await getApprovedProfessionalCards()
   const title = 'Professionals in Pakistan – Find Doctors, Lawyers, Experts | LocalePak'
-  const description = 'Find approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors and more — and contact them directly.'
+  const description = 'Find approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors, plumbers, electricians, AC technicians, tailors, beauticians and more — and contact them directly.'
   return {
     title,
     description,
@@ -50,7 +50,7 @@ export default async function ProfessionalsPage() {
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">Professionals in Pakistan</h1>
           <p className="text-slate-400 text-sm">
-            Browse approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors and more — and contact them directly.
+            Browse approved professional profiles across Pakistan — doctors, lawyers, accountants, developers, tutors, plumbers, electricians, AC technicians, tailors, beauticians and more — and contact them directly.
           </p>
         </div>
       </section>
