@@ -604,10 +604,21 @@ export default function DashboardPage() {
                       // owner already paid and is waiting on verification —
                       // no second upload panel. Otherwise an unpaid or
                       // rejected-proof listing gets the Pay panel.
+                    // Rejected tier listings also get the panel: a business
+                    // rejected by admin (status 'rejected') with a paid tier
+                    // previously had NO proof option at all — only "create
+                    // a new listing" — even though a fresh proof for the
+                    // SAME listing is exactly what admin needs to approve
+                    // it. The owner still only creates a payment_proofs
+                    // doc (Firestore rules forbid owners changing a
+                    // listing's status/paymentStatus/tier); admin approval
+                    // of that proof is what re-approves the listing.
                       const tierProofPending = !!proof?.tier && proof.status === 'pending'
+                    const rejectedTierResubmit = item.status === 'rejected' && !!item.tier && !tierProofPending
                       const needsPayment =
-                        (item.paymentStatus === 'awaiting_payment' || item.paymentStatus === 'payment_rejected') &&
-                        !tierProofPending
+                        ((item.paymentStatus === 'awaiting_payment' || item.paymentStatus === 'payment_rejected') &&
+                        !tierProofPending) ||
+                        rejectedTierResubmit
                       const canEdit = item.status === 'approved' && canEditTier(item.tier)
                       const projectLimit = projectLimitFor(item.tier)
                       const showProjects = item.status === 'approved' && projectLimit > 0
@@ -660,7 +671,7 @@ export default function DashboardPage() {
                                   aria-expanded={payFor === item.id}
                                   className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-full transition-colors cursor-pointer"
                                 >
-                                  <Wallet className="w-3.5 h-3.5" /> {item.paymentStatus === 'payment_rejected' ? 'Re-upload Proof' : 'Pay Now'}
+                                  <Wallet className="w-3.5 h-3.5" /> {item.paymentStatus === 'payment_rejected' ? 'Re-upload Proof' : item.status === 'rejected' ? 'Upload New Proof' : 'Pay Now'}
                                 </button>
                               )}
                               {canEdit && (
@@ -716,7 +727,9 @@ export default function DashboardPage() {
 
                           {needsPayment && (
                             <p className="text-[11px] font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-                              {item.paymentStatus === 'payment_rejected'
+                              {item.status === 'rejected' && item.paymentStatus !== 'payment_rejected'
+                                  ? 'This listing was rejected — upload a new payment screenshot for this same listing below. Admin verifies it against this listing, and approving it approves this listing (no need to create a new one).'
+                                : item.paymentStatus === 'payment_rejected'
                                 ? 'Your payment proof was not verified — upload a new screenshot below.'
                                 : `Payment pending — your ${tierLabel(item.tier)} listing (${formatPKR(tierPrice(item.tier))}) waits for its payment proof below.`}
                             </p>
@@ -763,9 +776,22 @@ export default function DashboardPage() {
                               {item.rejectionNote && (
                                 <p className="text-xs text-red-700">Reviewer note: {item.rejectionNote}</p>
                               )}
+                              {tierProofPending ? (
                               <p className="text-xs text-red-700">
-                                Fix these issues and create a new listing — this one cannot be re-approved as it stands.
+                              A new payment proof for this listing is already under review — admin verifies it
+                              against this listing, and approving it approves this listing.
                               </p>
+                          ) : item.tier ? (
+                                <p className="text-xs text-red-700">
+                                    You can upload a new payment proof for this same listing with the "Upload New Proof"
+                                  button above — approving it approves this listing. Creating a new listing is only
+                                  needed if you want to start over.
+                                </p>
+                          ) : (
+                                <p className="text-xs text-red-700">
+                                    Fix these issues and create a new listing — this one cannot be re-approved as it stands.
+                                </p>
+                          )}
                               <Link
                                 href={item.type === 'Company' ? '/add-company' : item.type === 'Job' ? '/add-job' : '/add-business'}
                                 className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-lg transition-colors"
