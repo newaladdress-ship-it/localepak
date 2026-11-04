@@ -11,7 +11,7 @@ import { CITY_INFO, generateCityContent } from '@/lib/seo-content'
 import { getCitySeoCopy } from '@/lib/seo-directory-content'
 import { BreadcrumbSchema } from '@/components/seo/breadcrumb-schema'
 import MarkdownContent from '@/components/seo/markdown-content'
-import { getCityCards } from '@/lib/public-listings'
+import { getCityCards, getApprovedReviewAverages, getTopRatedCards } from '@/lib/public-listings'
 import { MapPin, Building2, Phone, ArrowRight } from 'lucide-react'
 
 export const revalidate = 2592000
@@ -19,6 +19,7 @@ export const revalidate = 2592000
 // Shared between generateMetadata and the page component so the
 // merged city listings are fetched once per render, not twice.
 const getCachedCityCards = cache((city: string, citySlug: string) => getCityCards(city, citySlug))
+const getCachedReviewAverages = cache(() => getApprovedReviewAverages())
 
 function cityTitle(city: string): string {
   return city.length <= 12
@@ -68,9 +69,17 @@ export async function generateMetadata(props: {
     return { title: 'City Not Found | LocalePak', robots: { index: false, follow: false } }
   }
   const info = CITY_INFO[city]
-  const title = cityTitle(city)
-  const description = cityDescription(city, info?.province)
   const cards = await getCachedCityCards(city, cityToSlug(city))
+  // Gap 1: the "Best businesses in {city}" title is used ONLY when
+  // the page actually has a top-rated section (real approved
+  // reviews); otherwise the existing title stays, so the title
+  // never promises a ranking the page does not show.
+  const averages = await getCachedReviewAverages()
+  const topRated = getTopRatedCards(cards, averages)
+  const title = topRated.length > 0
+    ? `Best Businesses in ${city} – Top Rated | LocalePak`
+    : cityTitle(city)
+  const description = cityDescription(city, info?.province)
   const canonical = `https://www.localepak.com/city/${cityToSlug(city)}/`
   return {
     title,
@@ -91,6 +100,8 @@ export default async function CityPage(props: {
 
   const slug = cityToSlug(city)
   const listings = await getCachedCityCards(city, slug)
+  const averages = await getCachedReviewAverages()
+  const topRated = getTopRatedCards(listings, averages)
   const info = CITY_INFO[city]
   const copy = getCitySeoCopy(slug)
   const guide = generateCityContent(city)
@@ -122,11 +133,65 @@ export default async function CityPage(props: {
             </p>
             {info?.districts && (
               <p className="text-xs text-slate-400">
-                Popular areas: {info.districts.join(' · ')}
+                Popular areas:{' '}
+                {info.districts.map((district, i) => (
+                  <span key={district}>
+                    {i > 0 && ' · '}
+                    <Link href={`/city/${slug}/area/${slugify(district)}`} className="hover:text-emerald-300 font-semibold">
+                      {district}
+                    </Link>
+                  </span>
+                ))}
               </p>
             )}
           </div>
         </section>
+
+        {/* Top rated in this city (Gap 1) — rendered ONLY when real
+            approved reviews exist; averages come from approved
+            reviews, never invented. */}
+        {topRated.length > 0 && (
+          <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
+            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              Top rated in {city}
+            </h2>
+            <p className="text-sm text-slate-500">
+              The highest-rated {city} businesses on LocalePak, ranked by their approved customer reviews.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {topRated.map(biz => (
+                <article key={biz.id} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs hover:shadow-lg transition-all flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-extrabold text-slate-900 leading-snug">{biz.name}</h3>
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 text-[11px] font-bold">
+                      ★ {biz.avgRating.toFixed(1)} · {biz.reviewCount} review{biz.reviewCount === 1 ? '' : 's'}
+                    </span>
+                  </div>
+                  {biz.city && (
+                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-emerald-600" /> {biz.city}
+                    </p>
+                  )}
+                  {biz.phone && (
+                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                      <Phone className="w-3.5 h-3.5 text-emerald-600" /> {biz.phone}
+                    </p>
+                  )}
+                  {biz.description && (
+                    <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{biz.description}</p>
+                  )}
+                  <Link
+                    href={`/business/${biz.slug}`}
+                    prefetch={false}
+                    className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700"
+                  >
+                    View Business <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Categories in this city */}
         <section className="py-14 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
