@@ -1,12 +1,18 @@
 // ============================================================
 // LocalePak — professional profile professions
 // ------------------------------------------------------------
-// The profession dropdown on the add-professional form: 50
+// The profession dropdown on the add-professional form: 55
 // common professions plus an "Other" choice that lets the
 // user type their own profession freehand. The stored value
 // is always the plain profession string (the dropdown choice
 // or the custom text) — nothing here is an enum enforced
 // anywhere else, so older free-text values keep working.
+// Gap 4 (2026-11-04): the five trades below were added so
+// plumbers, electricians, AC technicians, tailors and beauticians
+// are findable through the professionals surface instead of
+// being reachable only via the freehand "Other" field, which
+// creates no landing or filter value. No trade listings are
+// invented by this list — it only offers the choice.
 // ============================================================
 
 export const PROFESSIONS: string[] = [
@@ -60,6 +66,11 @@ export const PROFESSIONS: string[] = [
   'Makeup Artist',
   'Journalist',
   'Banker',
+  'Plumber',
+  'Electrician',
+  'AC Technician',
+  'Tailor',
+  'Beautician',
 ]
 
 /** Select value for the freehand profession choice. */
