@@ -69,6 +69,8 @@ export type ListingDoc = { id: string; data: any }
 
 /** All approved business documents (serialized). Release-cycle filtering stays with the caller. */
 export async function fetchApprovedBusinesses(): Promise<ListingDoc[]> {
+  // Dummy-config short-circuit (lib/firebase.ts): never let the SDK
+  // retry against a project that cannot answer during static gen.
   if (isDummyFirebase) return []
   try {
     const snap = await getDocs(query(collection(db, 'businesses'), where('status', '==', 'approved')))
@@ -184,6 +186,8 @@ export type PublicCompanyCard = {
 
 /** Map a company document to the public listing-card shape (same mapping the old client page used). */
 export function toCompanyCard(doc: ListingDoc): PublicCompanyCard {
+  // Approved edits past their 7-day boundary show on cards too, not
+  // just on the detail page (lib/edit-requests.ts).
   const data = applyPendingEdit(doc.data, Date.now())
   return {
     id: doc.id,
@@ -235,6 +239,7 @@ export type PublicProfessionalCard = {
 
 /** Map a professional document to the public listing-card shape. */
 export function toProfessionalCard(doc: ListingDoc): PublicProfessionalCard {
+  // Approved edits past their 7-day boundary show on cards too.
   const data = applyPendingEdit(doc.data, Date.now())
   return {
     id: doc.id,
@@ -327,6 +332,7 @@ export async function getApprovedUserBlogPosts(): Promise<UserBlogPost[]> {
 
 /** Map a business document to the public listing-card shape. */
 export function toBusinessCard(doc: ListingDoc): PublicBusinessCard {
+  // Approved edits past their 7-day boundary show on cards too.
   const data = applyPendingEdit(doc.data, Date.now())
   return {
     id: doc.id,
@@ -371,6 +377,8 @@ export async function getMergedBusinessCards(): Promise<PublicBusinessCard[]> {
   const rows = await fetchApprovedBusinesses()
   const now = Date.now()
   const cards = rows
+    // Weekly batch release (lib/release.ts): approved businesses go
+    // public at the next 7-day cycle boundary, not immediately.
     .filter((r) => isReleased(r.data.approvedAt, now))
     .map(toBusinessCard)
   return mergeSeedAndFirestore(SEED_CARDS, cards)
@@ -408,6 +416,7 @@ export async function getCityCategoryCards(args: {
     phone: s.phone || '',
     description: s.description,
   }))
+
   const rows = await fetchApprovedBusinesses()
   const now = Date.now()
   const cards: PublicBusinessCard[] = []
@@ -459,6 +468,7 @@ export async function getCityCards(
     phone: s.phone || '',
     description: s.description,
   }))
+
   const rows = await fetchApprovedBusinesses()
   const now = Date.now()
   const cards: PublicBusinessCard[] = []
@@ -493,6 +503,7 @@ export async function getCategoryCards(
     phone: s.phone || '',
     description: s.description,
   }))
+
   const rows = await fetchApprovedBusinesses()
   const now = Date.now()
   const cards: PublicBusinessCard[] = []
@@ -655,6 +666,7 @@ export type SitemapGapData = {
 export async function getSitemapGapData(): Promise<SitemapGapData> {
   const comboSet = new Set<string>()
   for (const s of SEED_BUSINESSES) comboSet.add(`${s.citySlug}/${s.categorySlug}`)
+
   const ownerBusinessSlugs: string[] = []
   const rows = await fetchApprovedBusinesses()
   const now = Date.now()
@@ -672,6 +684,7 @@ export async function getSitemapGapData(): Promise<SitemapGapData> {
     )
     if (citySlug && cat) comboSet.add(`${citySlug}/${cat.id}`)
   }
+
   const areaPages: SitemapGapData['areaPages'] = []
   for (const [city, info] of Object.entries(CITY_INFO)) {
     if (!info.districts) continue
@@ -688,6 +701,7 @@ export async function getSitemapGapData(): Promise<SitemapGapData> {
       }
     }
   }
+
   const listingBackedCombos = [...comboSet].map((key) => {
     const [citySlug, categoryId] = key.split('/')
     return { citySlug, categoryId }

@@ -47,25 +47,25 @@ export default function AdminPaymentsPage() {
         // must never break the proofs list) so proofs re-uploaded
         // against a REJECTED listing carry that context on the card.
         await Promise.all(
-            rows.map(async (row) => {
-                const col = LISTING_COL[row.data.listingType] || 'businesses'
-              if (!row.data.listingId) return
-              try {
-                const lsnap = await getDoc(db, col, row.data.listingId)
-                if (lsnap.exists()) {
-                    const ld = lsnap.data() as any
-                  row.listing = {
-                      status: ld.status || 'pending',
-                    rejectionReasons: Array.isArray(ld.rejectionReasons) ? ld.rejectionReasons : [],
-                    rejectionNote: ld.rejectionNote || '',
-                    slug: ld.slug || '',
-                  }
+          rows.map(async (row) => {
+            const col = LISTING_COL[row.data.listingType] || 'businesses'
+            if (!row.data.listingId) return
+            try {
+              const lsnap = await getDoc(doc(db, col, row.data.listingId))
+              if (lsnap.exists()) {
+                const ld = lsnap.data() as any
+                row.listing = {
+                  status: ld.status || 'pending',
+                  rejectionReasons: Array.isArray(ld.rejectionReasons) ? ld.rejectionReasons : [],
+                  rejectionNote: ld.rejectionNote || '',
+                  slug: ld.slug || '',
                 }
-              } catch {
-                  // Listing unreadable — proof still shows without context.
               }
-            })
-      )
+            } catch {
+              // Listing unreadable — proof still shows without context.
+            }
+          })
+        )
         // Pending first; within pending, proofs for rejected listings
         // first (those are re-uploads an admin can approve straight
         // into a live listing); then newest first within each group.
@@ -73,8 +73,8 @@ export default function AdminPaymentsPage() {
         rows.sort((a, b) => {
           const r = rank(a.data.status || 'pending') - rank(b.data.status || 'pending')
           if (r !== 0) return r
-          const ra = a.listing?.status === 'rejected' ? 0: 1
-          const rb = b.listing?.status === 'rejected' ? 0: 1
+          const ra = a.listing?.status === 'rejected' ? 0 : 1
+          const rb = b.listing?.status === 'rejected' ? 0 : 1
           if (ra !== rb) return ra - rb
           return (b.data.createdAt?.toMillis?.() || 0) - (a.data.createdAt?.toMillis?.() || 0)
         })
@@ -281,19 +281,19 @@ export default function AdminPaymentsPage() {
                     {data.reviewedAt ? ` · Reviewed ${formatDate(data.reviewedAt)}` : ''}
                   </p>
                   {item.listing?.status === 'rejected' && (
-                <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-                  New proof for a previously rejected listing
-                {(item.listing.rejectionReasons?.length > 0 || item.listing.rejectionNote) &&
-                  ` — rejected for: ${[...(item.listing.rejectionReasons || []), item.listing.rejectionNote].filter(Boolean).join(' · ')}`
-                {' '}· Approving this proof also approves this same listing.{' '}
-                  <Link href={LISTING_ADMIN_PAGE[data.listingType] || '/admin/businesses'} className="underline underline-off
-                      View in {data.listingType === 'company'? 'Companies': data.listingType === 'job'? 'Jobs': data.listingType === 'professional'? 'Professionals': 'Businesses'}
-                    </Link>
+                    <p className="text-xs font-bold text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                      New proof for a previously rejected listing
+                      {(item.listing.rejectionReasons?.length > 0 || item.listing.rejectionNote) &&
+                        ` — rejected for: ${[...(item.listing.rejectionReasons || []), item.listing.rejectionNote].filter(Boolean).join(' · ')}`}
+                      {' '}· Approving this proof also approves this same listing.{' '}
+                      <Link href={LISTING_ADMIN_PAGE[data.listingType] || '/admin/businesses'} className="underline underline-offset-2">
+                        View in {data.listingType === 'company' ? 'Companies' : data.listingType === 'job' ? 'Jobs' : data.listingType === 'professional' ? 'Professionals' : 'Businesses'}
+                      </Link>
                     </p>
                   )}
-                    {data.adminNote && status === 'rejected' && (
-                      <p className="text-xs text-red-600">Admin note: {data.adminNote}</p>
-            )}
+                  {data.adminNote && status === 'rejected' && (
+                    <p className="text-xs text-red-600">Admin note: {data.adminNote}</p>
+                  )}
                   {status === 'pending' && (
                     <div className="flex flex-col sm:flex-row gap-2 pt-2">
                       <button type="button" disabled={busy === id} onClick={() => approve(item)} className={approveBtn}>
