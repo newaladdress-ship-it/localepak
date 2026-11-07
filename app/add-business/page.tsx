@@ -100,6 +100,8 @@ const initialForm: FormState = {
   tags: '',
 }
 
+const DRAFT_KEY = 'localepak_add_business_draft'
+
 const STEP_TITLES = [
   'Basic Info',
   'Categories',
@@ -122,7 +124,11 @@ function isValidEmail(value: string): boolean {
 export default function AddBusinessPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  // True once Firebase has reported the first auth state. The form
+  // renders before that (and for signed-out visitors) so Googlebot
+  // and first-time visitors see the real page; only the submit is
+  // gated behind sign-in.
+  const [authChecked, setAuthChecked] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [step, setStep] = useState(1)
   const [stepError, setStepError] = useState('')
@@ -135,17 +141,37 @@ export default function AddBusinessPage() {
   const [productName, setProductName] = useState('')
   const [productPrice, setProductPrice] = useState('')
 
+  // Draft restore: a signed-out visitor who filled the form, was sent
+  // to sign in on submit, and came back via /login?next= lands here
+  // with their entries intact (same tab, sessionStorage).
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const draft = JSON.parse(raw) as { form?: FormState; tier?: ListingTier; step?: number }
+        if (draft.form && typeof draft.form.name === 'string') {
+          setForm({ ...initialForm, ...draft.form })
+          if (draft.tier) setTier(draft.tier)
+          if (typeof draft.step === 'number') setStep(Math.min(8, Math.max(1, draft.step)))
+        }
+      }
+    } catch {
+      // Corrupt draft — ignore it and start with a blank form.
+    }
+    try {
+      sessionStorage.removeItem(DRAFT_KEY)
+    } catch {
+      // Storage unavailable — nothing to clean up.
+    }
+  }, [])
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (!u) {
-        router.push('/login')
-        return
-      }
       setUser(u)
-      setAuthLoading(false)
+      setAuthChecked(true)
     })
     return () => unsub()
-  }, [router])
+  }, [])
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm((f) => ({ ...f, [key]: value }))
@@ -258,7 +284,18 @@ export default function AddBusinessPage() {
       setStepError(err)
       return
     }
-    if (!user) return
+    if (!user) {
+      // Save the completed form so the sign-in round-trip does not
+      // wipe it; /login?next= brings the user straight back here.
+      try {
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ form, tier, step }))
+      } catch {
+        // Storage unavailable — continue to sign-in anyway.
+      }
+      toast.info('Please sign in to submit your business — you will come straight back here.')
+      router.push('/login?next=/add-business')
+      return
+    }
     setIsSubmitting(true)
     try {
       const tags = form.tags
@@ -310,18 +347,6 @@ export default function AddBusinessPage() {
     }
   }
 
-  if (authLoading) {
-    return (
-      <>
-        <Navbar />
-        <main className="bg-[#F8FAFC] min-h-screen py-16 px-4 flex items-center justify-center">
-          <p className="text-sm text-slate-400">Loading...</p>
-        </main>
-        <Footer />
-      </>
-    )
-  }
-
   // Payment step: the listing is saved; the buyer pays and uploads
   // the proof here. Only then does the confirmation email go out.
   if (savedBusiness && user) {
@@ -362,6 +387,22 @@ export default function AddBusinessPage() {
     <>
       <Navbar />
       <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4">
+        {authChecked && !user && (
+          <div className="max-w-2xl mx-auto mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium flex items-center gap-2">
+            <Info className="w-4 h-4 text-amber-600 shrink-0" />
+            <span>
+              You can fill in the form now — you will be asked to sign in when you submit.{' '}
+              <Link href="/login?next=/add-business" className="text-emerald-600 font-bold hover:underline">
+                Sign in
+              </Link>
+              {' '}or{' '}
+              <Link href="/register?next=/add-business" className="text-emerald-600 font-bold hover:underline">
+                create an account
+              </Link>
+              .
+            </span>
+          </div>
+        )}
         <div className="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
           <div className="text-center mb-6">
             <div className="inline-flex p-3 rounded-2xl bg-emerald-50 text-emerald-600 mb-3">
@@ -369,6 +410,10 @@ export default function AddBusinessPage() {
             </div>
             <h1 className="text-2xl font-bold text-slate-900">Add Your Business</h1>
             <p className="text-xs text-slate-500 mt-1">Business listing — plans from PKR 99, verified before approval</p>
+            <p className="text-sm text-slate-600 mt-3 max-w-lg mx-auto">
+              List your business on LocalePak so customers across Pakistan can find your phone number, address,
+              opening hours and services. Fill in the details below — your listing is reviewed before it appears publicly.
+            </p>
           </div>
 
           {/* Progress */}
@@ -746,6 +791,41 @@ export default function AddBusinessPage() {
             </p>
           </form>
         </div>
+
+        <section className="max-w-2xl mx-auto mt-8" aria-label="Frequently asked questions">
+          <h2 className="text-lg font-extrabold text-slate-900 mb-4">Frequently asked questions</h2>
+          <div className="space-y-3">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+              <h3 className="font-bold text-slate-900 text-sm">What details do I need to add my business?</h3>
+              <p className="text-sm text-slate-600 mt-1">
+                Your business name, email, phone number, category, city and complete address. Opening hours,
+                services, products, website and social links are optional, and the description needs at least
+                30 characters.
+              </p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+              <h3 className="font-bold text-slate-900 text-sm">What happens after I submit my business?</h3>
+              <p className="text-sm text-slate-600 mt-1">
+                Your listing is saved, then you pay for your plan and upload a payment screenshot. Our team
+                verifies the payment and reviews the listing — once approved, it appears publicly on LocalePak.
+              </p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+              <h3 className="font-bold text-slate-900 text-sm">Do I need an account to add a business?</h3>
+              <p className="text-sm text-slate-600 mt-1">
+                Yes. You can fill in the form first, and when you submit you will be asked to sign in or create
+                an account — you come straight back to this page afterwards, with your entries intact.
+              </p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5">
+              <h3 className="font-bold text-slate-900 text-sm">Can I update my listing later?</h3>
+              <p className="text-sm text-slate-600 mt-1">
+                Yes. Sign in to your dashboard to manage your listings and request changes — updates go through
+                review before they appear publicly.
+              </p>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </>
