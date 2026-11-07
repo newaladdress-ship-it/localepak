@@ -48,6 +48,9 @@ export default async function CompaniesPage() {
           <p className="text-slate-400 text-sm">
             Browse approved companies across Pakistan — manufacturers, suppliers, exporters and service providers you can contact directly for products, quotes and jobs.
           </p>
+          <Link href="/add-company" prefetch={false} className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-colors shadow-md">
+            Add Your Company <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 
@@ -55,7 +58,7 @@ export default async function CompaniesPage() {
         <p className="text-sm text-slate-500 max-w-3xl mb-8">
           For buyers and trade enquiries: use this list of companies to find a manufacturer or supplier, check what each firm offers, and contact it directly. Firms in the manufacturing sector are also listed under{' '}
           <Link href="/category/manufacturing" className="font-bold text-emerald-600 hover:text-emerald-700">
-            Manufacturing & Industrial
+            Manufacturing &amp; Industrial
           </Link>
           .
         </p>

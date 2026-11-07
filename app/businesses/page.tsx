@@ -54,6 +54,9 @@ export default async function BusinessesPage() {
               Browse the A–Z index
             </Link>
           </p>
+          <Link href="/add-business" prefetch={false} className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition-colors shadow-md">
+            Add Your Business <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
 

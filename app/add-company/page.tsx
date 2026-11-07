@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
@@ -26,6 +27,8 @@ function slugify(value: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+const DRAFT_KEY = 'localepak_add_company_draft'
+
 const inputClass =
   'w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-base sm:text-sm focus:outline-none focus:border-emerald-600'
 const labelClass = 'block text-xs font-bold text-slate-700 mb-1'
@@ -33,7 +36,11 @@ const labelClass = 'block text-xs font-bold text-slate-700 mb-1'
 export default function AddCompanyPage() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [authLoading, setAuthLoading] = useState(true)
+  // True once Firebase has reported the first auth state. The form
+  // renders before that (and for signed-out visitors) so Googlebot
+  // and first-time visitors see the real page; only the submit is
+  // gated behind sign-in.
+  const [authChecked, setAuthChecked] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [name, setName] = useState('')
@@ -49,23 +56,73 @@ export default function AddCompanyPage() {
   // proof is uploaded on the payment screen below.
   const [savedCompany, setSavedCompany] = useState<{ id: string; name: string } | null>(null)
 
+  // Draft restore: a signed-out visitor who filled the form, was sent
+  // to sign in on submit, and came back via /login?next= lands here
+  // with their entries intact (same tab, sessionStorage).
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY)
+      if (raw) {
+        const draft = JSON.parse(raw) as {
+          name?: string
+          industry?: string
+          city?: string
+          phone?: string
+          email?: string
+          website?: string
+          address?: string
+          description?: string
+          tier?: ListingTier
+        }
+        if (draft.name && typeof draft.name === 'string') {
+          setName(draft.name)
+          if (draft.industry) setIndustry(draft.industry)
+          if (draft.city) setCity(draft.city)
+          if (draft.phone) setPhone(draft.phone)
+          if (draft.email) setEmail(draft.email)
+          if (draft.website) setWebsite(draft.website)
+          if (draft.address) setAddress(draft.address)
+          if (draft.description) setDescription(draft.description)
+          if (draft.tier) setTier(draft.tier)
+        }
+      }
+    } catch {
+      // Corrupt draft — ignore it and start with a blank form.
+    }
+    try {
+      sessionStorage.removeItem(DRAFT_KEY)
+    } catch {
+      // Storage unavailable — nothing to clean up.
+    }
+  }, [])
+
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => {
-      if (!u) {
-        router.push('/login')
-        return
-      }
       setUser(u)
-      setAuthLoading(false)
+      setAuthChecked(true)
     })
     return () => unsub()
-  }, [router])
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user) return
     if (!isValidPakistaniPhone(phone)) {
       toast.error('Please enter a valid Pakistani mobile number (e.g. 0300 1234567 or +92 300 1234567).')
+      return
+    }
+    if (!user) {
+      // Save the completed form so the sign-in round-trip does not
+      // wipe it; /login?next= brings the user straight back here.
+      try {
+        sessionStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ name, industry, city, phone, email, website, address, description, tier })
+        )
+      } catch {
+        // Storage unavailable — continue to sign-in anyway.
+      }
+      toast.info('Please sign in to submit your company — you will come straight back here.')
+      router.push('/login?next=/add-company')
       return
     }
     setIsSubmitting(true)
@@ -101,18 +158,6 @@ export default function AddCompanyPage() {
     } finally {
       setIsSubmitting(false)
     }
-  }
-
-  if (authLoading) {
-    return (
-      <>
-        <Navbar />
-        <main className="bg-[#F8FAFC] min-h-screen py-16 px-4 flex items-center justify-center">
-          <p className="text-sm text-slate-400">Loading...</p>
-        </main>
-        <Footer />
-      </>
-    )
   }
 
   // Payment step: the listing is saved; the buyer pays and uploads
@@ -153,13 +198,34 @@ export default function AddCompanyPage() {
     <>
       <Navbar />
       <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
-        <div className="max-w-lg w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
+        <div className="max-w-lg w-full">
+          {authChecked && !user && (
+            <div className="mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-medium flex items-center gap-2">
+              <Info className="w-4 h-4 text-amber-600 shrink-0" />
+              <span>
+                You can fill in the form now — you will be asked to sign in when you submit.{' '}
+                <Link href="/login?next=/add-company" className="text-emerald-600 font-bold hover:underline">
+                  Sign in
+                </Link>
+                {' '}or{' '}
+                <Link href="/register?next=/add-company" className="text-emerald-600 font-bold hover:underline">
+                  create an account
+                </Link>
+                .
+              </span>
+            </div>
+          )}
+          <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
           <div className="text-center mb-8">
             <div className="inline-flex p-3 rounded-2xl bg-emerald-50 text-emerald-600 mb-3">
               <Factory className="w-8 h-8" />
             </div>
             <h1 className="text-2xl font-bold text-slate-900">Add Your Company</h1>
             <p className="text-xs text-slate-500 mt-1">Company profile — plans from PKR 99, verified before approval</p>
+            <p className="text-sm text-slate-600 mt-3 max-w-lg mx-auto">
+              List your company on LocalePak so buyers across Pakistan can find your industry, city and contact
+              details. Fill in the profile below — it is reviewed before it appears publicly.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -226,6 +292,42 @@ export default function AddCompanyPage() {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
+          </div>
+
+          <section className="mt-8" aria-label="Frequently asked questions">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-4">Frequently asked questions</h2>
+            <div className="space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 className="font-bold text-slate-900 text-sm">What details do I need to add my company?</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Your company name, industry, city and phone number. Email, website, address and a description
+                  are optional, but they help buyers understand what your company offers.
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 className="font-bold text-slate-900 text-sm">What happens after I submit my company?</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Your company profile is saved, then you pay for your plan and upload a payment screenshot.
+                  Our team verifies the payment and reviews the profile — once approved, it appears publicly
+                  on LocalePak.
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 className="font-bold text-slate-900 text-sm">Do I need an account to add a company?</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Yes. You can fill in the form first, and when you submit you will be asked to sign in or
+                  create an account — you come straight back to this page afterwards, with your entries intact.
+                </p>
+              </div>
+              <div className="bg-white border border-slate-200 rounded-2xl p-5">
+                <h3 className="font-bold text-slate-900 text-sm">How do buyers find my company?</h3>
+                <p className="text-sm text-slate-600 mt-1">
+                  Approved companies appear on LocalePak&apos;s companies list and in search, so buyers can find
+                  you by industry and city and contact you directly.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
       <Footer />

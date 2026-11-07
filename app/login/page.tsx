@@ -10,6 +10,16 @@ import { toast } from 'sonner'
 import { auth } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 
+// Only same-site relative paths are accepted as a post-login
+// destination (e.g. /add-business). Anything else — absolute URLs,
+// protocol-relative URLs, empty values — falls back to /dashboard,
+// so a ?next= parameter can never bounce the user to another site.
+function safeNext(value: string | null): string {
+  if (!value) return '/dashboard'
+  if (!value.startsWith('/') || value.startsWith('//')) return '/dashboard'
+  return value
+}
+
 function mapLoginError(err: any): string {
   switch (err?.code) {
     case 'auth/invalid-credential':
@@ -38,6 +48,8 @@ function LoginForm() {
   const router = useRouter()
 
   const justRegistered = searchParams.get('registered') === '1'
+  const next = searchParams.get('next')
+  const returnTo = safeNext(next)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,7 +69,7 @@ function LoginForm() {
       localStorage.setItem('localepak_user_session', JSON.stringify(sessionPayload))
       toast.success('Successfully logged into LocalePak.')
       setTimeout(() => {
-        router.push('/dashboard')
+        router.push(returnTo)
       }, 500)
     } catch (err: any) {
       setErrorMsg(mapLoginError(err))
@@ -81,7 +93,10 @@ function LoginForm() {
       {justRegistered && (
         <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-medium flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Your account was created. Sign in with your email and password to open your dashboard.</span>
+          <span>
+            Your account was created. Sign in with your email and password
+            {next ? ' to continue.' : ' to open your dashboard.'}
+          </span>
         </div>
       )}
 
@@ -145,7 +160,7 @@ function LoginForm() {
         <p className="text-xs text-slate-500">
           Don&apos;t have an account yet?{' '}
           <Link
-            href="/register"
+            href={next ? `/register?next=${encodeURIComponent(next)}` : '/register'}
             className="text-emerald-600 font-bold hover:underline"
           >
             Create Account

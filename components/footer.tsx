@@ -9,6 +9,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
       <UniversalHelpBanner />
       <footer className="bg-[#09090b] text-white pt-16 pb-12 border-t border-zinc-800 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Top Branding & NAP Bar */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center pb-12 border-b border-zinc-800/80 gap-6">
           <div className="flex flex-col gap-3">
@@ -25,6 +26,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
             <p className="text-xs text-zinc-400 max-w-md leading-relaxed">
               Pakistan-focused business discovery connecting companies, employers, professionals, job seekers, and customers through category and city pages.
             </p>
+            
             {/* Official NAP Display */}
             <div className="pt-2 space-y-1 text-xs text-zinc-300">
               <div className="flex items-center gap-2">
@@ -41,6 +43,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               )}
             </div>
           </div>
+
           <div className="flex items-center gap-4 flex-wrap">
             <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 text-xs font-medium">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -56,8 +59,10 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
             </div>
           </div>
         </div>
+
         {/* 5 Column Link Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 py-12 border-b border-slate-800/80">
+          
           {/* Section 1: Directory & Explore */}
           <div>
             <h3 className="font-bold text-white text-sm tracking-wider uppercase mb-4 text-emerald-400 flex items-center gap-2">
@@ -73,6 +78,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/search" prefetch={false} className="inline-block py-1 hover:text-emerald-400 transition-colors">Search</Link></li>
             </ul>
           </div>
+
           {/* Section 2: Major Cities */}
           <div>
             <h3 className="font-bold text-white text-sm tracking-wider uppercase mb-4 text-emerald-400 flex items-center gap-2">
@@ -89,6 +95,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/city/peshawar" className="inline-block py-1 hover:text-emerald-400 transition-colors">Peshawar Directory</Link></li>
             </ul>
           </div>
+
           {/* Section 3: Company & Trust */}
           <div>
             <h3 className="font-bold text-white text-sm tracking-wider uppercase mb-4 text-amber-400 flex items-center gap-2">
@@ -104,6 +111,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/html-sitemap" className="hover:text-amber-400 transition-colors">HTML Sitemap</Link></li>
             </ul>
           </div>
+
           {/* Section 4: Support & FAQs */}
           <div>
             <h3 className="font-bold text-white text-sm tracking-wider uppercase mb-4 text-sky-400 flex items-center gap-2">
@@ -118,6 +126,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/accessibility" className="hover:text-sky-400 transition-colors">Accessibility Statement</Link></li>
             </ul>
           </div>
+
           {/* Section 5: Policies & Legal */}
           <div>
             <h3 className="font-bold text-white text-sm tracking-wider uppercase mb-4 text-purple-400 flex items-center gap-2">
@@ -136,11 +145,23 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/refund-policy" className="hover:text-purple-400 transition-colors">Refund Policy</Link></li>
             </ul>
           </div>
+
         </div>
+
         {/* Yellow-pages synonym line (Gap 8): honest positioning copy only. */}
         <p className="pt-8 text-xs text-slate-400 text-center md:text-left">
           LocalePak — Pakistan&apos;s modern online yellow pages: a list of companies, suppliers and local services across Pakistan, organised by city and category.
         </p>
+
+        {/* Listed-on badges (user-approved 2026-11-07, "Lagao lagao"): IndieTools — Classic · Light.
+            Other approved badges (SaaS.fyi, SaaSCity, Startup Fame, Fazier, PeekLaunch, OpenHunts) join here as their codes arrive. */}
+        <div className="pt-8 flex flex-col md:flex-row items-center gap-4">
+          <span className="text-xs text-slate-400 uppercase tracking-wider">Listed on</span>
+          <a href="https://www.indietools.app/products/localepak" target="_blank" rel="noopener">
+            <img src="https://www.indietools.app/badges/listed-on-indietools-light.png" alt="Listed on IndieTools" width="176" height="56" />
+          </a>
+        </div>
+
         {/* Footer Bottom */}
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
           <p className="text-center md:text-left">
@@ -158,6 +179,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
             <Link href="/contact" className="hover:text-white">Contact</Link>
           </div>
         </div>
+
       </div>
     </footer>
     </>

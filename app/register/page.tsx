@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import { Mail, Lock, UserPlus, Building2, Phone, User, ArrowRight, Eye, EyeOff, AlertCircle, Check, X } from 'lucide-react'
@@ -36,7 +36,11 @@ function mapRegisterError(err: any): string {
   }
 }
 
-export default function RegisterPage() {
+function RegisterForm() {
+  const searchParams = useSearchParams()
+  // Where to send the user after sign-in (e.g. /add-business): kept
+  // through signup so the chain ends back at the page they came from.
+  const next = searchParams.get('next')
   const [ownerName, setOwnerName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -92,7 +96,7 @@ export default function RegisterPage() {
       await signOut(auth)
 
       toast.success('Account created successfully. Please sign in to continue.')
-      router.push('/login?registered=1')
+      router.push(next ? `/login?registered=1&next=${encodeURIComponent(next)}` : '/login?registered=1')
     } catch (err: any) {
       const friendly = mapRegisterError(err)
       setErrorMsg(friendly)
@@ -103,10 +107,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
-      <Navbar />
-      <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
+    <div className="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-xl">
           <div className="text-center mb-8">
             <div className="inline-flex p-3 rounded-2xl bg-emerald-50 text-emerald-600 mb-3">
               <UserPlus className="w-8 h-8" />
@@ -235,11 +236,25 @@ export default function RegisterPage() {
 
           <div className="mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link href="/login" className="text-emerald-600 font-bold hover:underline">
+            <Link
+              href={next ? `/login?next=${encodeURIComponent(next)}` : '/login'}
+              className="text-emerald-600 font-bold hover:underline"
+            >
               Sign In Here
             </Link>
           </div>
-        </div>
+    </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <>
+      <Navbar />
+      <main className="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen py-16 px-4 flex items-center justify-center">
+        <Suspense fallback={<div className="text-center text-slate-400 text-sm">Loading...</div>}>
+          <RegisterForm />
+        </Suspense>
       </main>
       <Footer />
     </>

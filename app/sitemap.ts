@@ -18,6 +18,8 @@ function citySlug(name: string): string {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Indexable core + policy pages only. /search is noindex, and
   // /login, /register, /dashboard are auth/utility pages — none belong here.
+  // /add-business and /add-company ARE indexable: they render fully for
+  // signed-out visitors (only the submit is gated behind sign-in).
   const corePages = [
     '',
     '/about',
@@ -25,7 +27,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/categories',
     '/cities',
     '/businesses',
+    '/add-business',
     '/companies',
+    '/add-company',
     '/professionals',
     '/jobs',
     '/blog',
