@@ -38,7 +38,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/support',
     '/careers',
     '/advertise-with-us',
+    '/find-us',
     '/html-sitemap',
+    '/docs',
   ]
 
   const policyPages = [
@@ -57,8 +59,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // No lastModified on static routes: stamping every URL with "today"
   // is a false freshness signal, so the field is omitted entirely.
+  // One exception: /blog is genuinely updated whenever a blog post is
+  // added or edited, so it carries the latest real blog date
+  // (dateModified, else date) from lib/blog-data.ts.
+  const latestBlogDate = Object.values(BLOG_POSTS)
+    .map((post) => new Date(post.dateModified || post.date))
+    .filter((d) => !Number.isNaN(d.getTime()))
+    .sort((a, b) => b.getTime() - a.getTime())[0]
   const coreRoutes = [...corePages, ...policyPages].map((path) => ({
     url: canonicalUrl(path),
+    ...(path === '/blog' && latestBlogDate
+      ? { lastModified: latestBlogDate }
+      : {}),
     changeFrequency: 'weekly' as const,
     priority: path === '' ? 1.0 : 0.6,
   }))

@@ -85,17 +85,24 @@ export default function RootLayout({
   return (
     <html lang="en" className={plusJakartaSans.variable}>
       <head>
-        {/* Google tag (gtag.js) — owner-supplied; first in <head> on every page via the root layout. */}
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.dataLayer = window.dataLayer || [];
+        {/*
+          Google tag (gtag.js) — owner-supplied; lazyOnload so analytics
+          never competes with the first paint on mobile. The loader and
+          the config share the lazyOnload strategy, so they run in order
+          after the page loads; pageviews are still recorded.
+        */}
+        <Script
+          id="gtag-loader"
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+        />
+        <Script id="gtag-config" strategy="lazyOnload">
+          {`window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
-  gtag('config', '${GA_MEASUREMENT_ID}');`,
-          }}
-        />
+  gtag('config', '${GA_MEASUREMENT_ID}');`}
+        </Script>
         <link rel="preconnect" href="https://images.unsplash.com" crossOrigin="anonymous" />
         <link rel="help" href="/llms.txt" type="text/plain" title="LLM Context" />
         <script

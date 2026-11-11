@@ -4,21 +4,27 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import {
   Search, MapPin, ChevronRight, ArrowRight, ShieldCheck, Globe,
-  BookOpen, Sparkles, LayoutGrid, Compass, Building2, MessageCircle, ListChecks
+  BookOpen, Sparkles, LayoutGrid, Compass, Building2, MessageCircle, ListChecks,
+  Star, Phone, Share2
 } from 'lucide-react'
 import { CATEGORIES, CITIES, TOP_CITIES } from '@/lib/data'
 import ListBusinessCta from '@/components/list-business-cta'
+import WebMcpTools from '@/components/webmcp-tools'
 import { BLOG_POSTS } from '@/lib/blog-data'
+import { getFeaturedBusinessCards } from '@/lib/public-listings'
 
 export const metadata: Metadata = {
   title: "Pakistan Business Directory – Find & List Free | LocalePak",
-  description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+  description: "LocalePak is Pakistan's business directory: find local businesses across 183 cities and 24 categories, or list your business with a public profile page.",
   alternates: {
     canonical: 'https://www.localepak.com/',
+    types: {
+      'text/markdown': '/index.md',
+    },
   },
   openGraph: {
     title: "Pakistan Business Directory – Find & List Free | LocalePak",
-    description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+    description: "LocalePak is Pakistan's business directory: find local businesses across 183 cities and 24 categories, or list your business with a public profile page.",
     url: 'https://www.localepak.com/',
     siteName: 'LocalePak',
     locale: 'en_PK',
@@ -27,7 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: "Pakistan Business Directory – Find & List Free | LocalePak",
-    description: "LocalePak is Pakistan's free business directory — a modern online yellow pages for Pakistan. Find local businesses by city & category — or add your business listing free and get a public profile page that search engines can read.",
+    description: "LocalePak is Pakistan's business directory: find local businesses across 183 cities and 24 categories, or list your business with a public profile page.",
   },
 }
 
@@ -58,7 +64,11 @@ function cityToSlug(name: string): string {
   return name.toLowerCase().replace(/\s+/g, '-')
 }
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Featured Businesses (paid Featured tier or admin-set). Empty array
+  // means the section below renders nothing at all.
+  const featuredBusinesses = await getFeaturedBusinessCards(8)
+
   const latestPosts = Object.values(BLOG_POSTS)
     .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, 3)
@@ -236,6 +246,60 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* FEATURED BUSINESSES — renders ONLY when at least one approved
+            business is featured (paid Featured tier, or admin Feature
+            toggle). Empty means no section at all: no empty state, no
+            filler, no seed/placeholder businesses. Newest featured first,
+            capped at 8 (lib/public-listings.ts). */}
+        {featuredBusinesses.length > 0 && (
+          <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-600">Featured Businesses</span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                  Featured Businesses
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">Featured listings from businesses across Pakistan.</p>
+              </div>
+              <Link href="/businesses" className="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+                <span>View All Businesses</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredBusinesses.map((biz) => (
+                <article key={biz.id} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-xs hover:shadow-lg transition-all flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-extrabold text-slate-900 leading-snug">{biz.name}</h3>
+                    <span className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold">
+                      <Star className="w-3 h-3" /> Featured
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600" /> {biz.city} · {biz.category}
+                  </p>
+                  {biz.phone && (
+                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                      <Phone className="w-3.5 h-3.5 text-emerald-600" /> {biz.phone}
+                    </p>
+                  )}
+                  {biz.description && (
+                    <p className="text-sm text-slate-600 leading-relaxed line-clamp-3">{biz.description}</p>
+                  )}
+                  <Link
+                    href={`/business/${biz.slug}`}
+                    prefetch={false}
+                    className="mt-auto inline-flex items-center gap-1.5 text-sm font-bold text-emerald-600 hover:text-emerald-700"
+                  >
+                    View {biz.name} <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* CITIES */}
         <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-slate-900 text-white rounded-3xl my-8">
           <div className="space-y-8">
@@ -353,7 +417,7 @@ export default function HomePage() {
               href="/register" prefetch={false}
               className="px-7 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-2xl shadow-lg shadow-emerald-600/20 transition-all"
             >
-              Create Free Account
+              Create a Free Account
             </Link>
             <Link
               href="/add-business" prefetch={false}
@@ -435,6 +499,46 @@ export default function HomePage() {
                 List Your Business Free
               </Link>
             </div>
+            <div className="flex items-center justify-center gap-2 pt-1 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-1.5 font-semibold">
+                <Share2 className="w-3.5 h-3.5" /> Share LocalePak:
+              </span>
+              <a
+                href="https://twitter.com/intent/tweet?text=LocalePak%20%E2%80%94%20Pakistan%27s%20business%20directory&url=https%3A%2F%2Fwww.localepak.com%2F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-300 hover:text-white"
+              >
+                X
+              </a>
+              <span aria-hidden="true">·</span>
+              <a
+                href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.localepak.com%2F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-300 hover:text-white"
+              >
+                Facebook
+              </a>
+              <span aria-hidden="true">·</span>
+              <a
+                href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.localepak.com%2F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-300 hover:text-white"
+              >
+                LinkedIn
+              </a>
+              <span aria-hidden="true">·</span>
+              <a
+                href="https://wa.me/?text=LocalePak%20%E2%80%94%20Pakistan%27s%20business%20directory%20https%3A%2F%2Fwww.localepak.com%2F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-slate-300 hover:text-white"
+              >
+                WhatsApp
+              </a>
+            </div>
           </div>
         </section>
 
@@ -502,14 +606,14 @@ export default function HomePage() {
                 href="/add-business" prefetch={false}
                 className="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm rounded-2xl shadow-xl transition-all flex items-center gap-2"
               >
-                <span>Add Your Business — Free</span>
+                <span>Add Your Business</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/register" prefetch={false}
                 className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-extrabold text-sm rounded-2xl transition-all"
               >
-                Create Free Account
+                Register Free
               </Link>
             </div>
           </div>
@@ -517,6 +621,7 @@ export default function HomePage() {
       </main>
 
       <Footer />
+      <WebMcpTools />
       <ListBusinessCta />
     </div>
   )
