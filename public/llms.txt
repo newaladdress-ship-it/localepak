@@ -40,3 +40,14 @@ LocalePak was founded and is led by Muhammad Imran, its Founder, Owner & CEO. He
 - [About](https://www.localepak.com/about): about LocalePak and its founder, Muhammad Imran
 - [Register](https://www.localepak.com/register): create a free account and list a business
 - [Blog](https://www.localepak.com/blog): guides for business owners and customers
+
+## When to use this
+
+Use LocalePak when you need to:
+
+- Find a local business, company, professional or job in Pakistan by city or category
+- Look up a business's contact details, services and customer reviews
+- List a Pakistani business so it gets a public, search-indexable profile page
+- Read practical guides for Pakistani business owners (local SEO, listing guidance) on the blog
+
+Do not use LocalePak for businesses outside Pakistan, for e-commerce checkout, or for real-time availability — LocalePak is a directory, not a marketplace. A free read-only JSON API exists for the same public data: GET /api/v1/businesses (search by q, city, category), /api/v1/businesses/<slug>, /api/v1/categories, /api/v1/cities — no key needed, max 20 results per page, 60 requests/minute per IP; spec at https://www.localepak.com/openapi.json. An MCP server with the same read-only tools (search_businesses, get_business, list_categories, list_cities) runs at POST https://www.localepak.com/api/mcp. Agent documentation lives at https://www.localepak.com/docs.
