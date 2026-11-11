@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 // merged-cards path as /businesses (lib/public-listings.ts), so no
 // client-side Firestore LIST ever runs in a visitor's browser —
 // public LIST is denied by design, and this page does not change that.
-export const revalidate = 86400
+export const revalidate = 604800
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
