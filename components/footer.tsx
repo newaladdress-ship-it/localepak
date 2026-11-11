@@ -108,6 +108,7 @@ export default function Footer({ hideSitePhone = false }: { hideSitePhone?: bool
               <li><Link href="/careers" className="hover:text-amber-400 transition-colors">Careers</Link></li>
               <li><Link href="/advertise-with-us" className="hover:text-amber-400 transition-colors">Advertise With Us</Link></li>
               <li><Link href="/blog" className="hover:text-amber-400 transition-colors">Pakistan Business Blog</Link></li>
+              <li><Link href="/find-us" className="hover:text-amber-400 transition-colors">Find Us Online</Link></li>
               <li><Link href="/html-sitemap" className="hover:text-amber-400 transition-colors">HTML Sitemap</Link></li>
             </ul>
           </div>
