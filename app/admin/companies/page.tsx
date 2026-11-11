@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { db } from '@/lib/firebase'
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore'
+import { collection, getDocs, doc, updateDoc, serverTimestamp } from 'firebase/firestore'
 import { toast } from 'sonner'
 import { Eye, Star, BadgeCheck, Pencil } from 'lucide-react'
 import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBtn, neutralBtn, dangerBtn } from '@/components/admin-shared'
@@ -214,7 +214,18 @@ export default function AdminCompaniesPage() {
                     <button
                       type="button"
                       disabled={busy === id}
-                      onClick={() => patch(id, { featured: !data.featured }, data.featured ? 'Featured removed.' : 'Company marked Featured.')}
+                      onClick={() =>
+                        patch(
+                          id,
+                          // Featuring stamps featuredAt (unfeaturing clears
+                          // it) — same single source of truth as businesses.
+                          {
+                            featured: !data.featured,
+                            featuredAt: data.featured ? null : serverTimestamp(),
+                          },
+                          data.featured ? 'Featured removed.' : 'Company marked Featured.',
+                        )
+                      }
                       className={neutralBtn}
                       aria-pressed={!!data.featured}
                     >
