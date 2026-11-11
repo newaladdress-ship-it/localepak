@@ -32,6 +32,8 @@ export type PublicBusinessCard = {
   city: string
   phone: string
   description: string
+  /** True when the listing is Featured (paid Featured tier, or admin-set). */
+  featured: boolean
 }
 
 /** Static seed listings as listing cards (build-time data, zero reads). */
@@ -43,6 +45,9 @@ export const SEED_CARDS: PublicBusinessCard[] = SEED_BUSINESSES.map((seed) => ({
   city: seed.city,
   phone: seed.phone || '',
   description: seed.description,
+  // Seed listings are never Featured — only real paid/admin-featured
+  // Firestore listings appear in the homepage Featured section.
+  featured: false,
 }))
 
 /** Deep-convert Firestore Timestamps to epoch millis so results are plain serializable data. */
@@ -342,7 +347,30 @@ export function toBusinessCard(doc: ListingDoc): PublicBusinessCard {
     city: data.city || '',
     phone: data.phone || '',
     description: data.description || '',
+    featured: data.featured === true,
   }
+}
+
+/**
+ * Featured businesses for the homepage section: approved + released
+ * listings with featured == true, newest featuredAt first, capped.
+ * In-memory filter on the approved fetch (same pattern as the other
+ * card getters) — no new composite index needed. Seed listings are
+ * never featured, so they never appear here.
+ */
+export async function getFeaturedBusinessCards(limitN = 8): Promise<PublicBusinessCard[]> {
+  const rows = await fetchApprovedBusinesses()
+  const now = Date.now()
+  const featuredAtOf = (data: any): number => {
+    if (typeof data.featuredAt === 'number') return data.featuredAt
+    if (typeof data.approvedAt === 'number') return data.approvedAt
+    return 0
+  }
+  return rows
+    .filter((r) => r.data.featured === true && isReleased(r.data.approvedAt, now))
+    .sort((a, b) => featuredAtOf(b.data) - featuredAtOf(a.data))
+    .slice(0, limitN)
+    .map(toBusinessCard)
 }
 
 /**
@@ -415,6 +443,7 @@ export async function getCityCategoryCards(args: {
     city: s.city,
     phone: s.phone || '',
     description: s.description,
+    featured: false,
   }))
 
   const rows = await fetchApprovedBusinesses()
@@ -439,6 +468,7 @@ export async function getCityCategoryCards(args: {
       city: docCity,
       phone: data.phone || '',
       description: data.description || '',
+      featured: data.featured === true,
     })
   }
   return mergeSeedAndFirestore(seeds, cards)
@@ -467,6 +497,7 @@ export async function getCityCards(
     city: s.city,
     phone: s.phone || '',
     description: s.description,
+    featured: false,
   }))
 
   const rows = await fetchApprovedBusinesses()
@@ -502,6 +533,7 @@ export async function getCategoryCards(
     city: s.city,
     phone: s.phone || '',
     description: s.description,
+    featured: false,
   }))
 
   const rows = await fetchApprovedBusinesses()

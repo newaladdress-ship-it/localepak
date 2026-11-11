@@ -28,9 +28,16 @@ export async function revalidateApprovedListing(input: {
   slug?: string
   category?: string
   city?: string
+  /**
+   * True when the listing is (now) Featured — the homepage Featured
+   * Businesses section renders from doc.featured, so '/' must refresh
+   * too. Only business listings appear there; companies/jobs/
+   * professionals never trigger a homepage refresh.
+   */
+  featured?: boolean
 }): Promise<void> {
   try {
-    const { kind, slug, category, city } = input
+    const { kind, slug, category, city, featured } = input
     const detailBase =
       kind === 'business' ? 'business' : kind === 'company' ? 'company' : kind === 'job' ? 'job' : 'professional'
     const indexBase =
@@ -56,6 +63,8 @@ export async function revalidateApprovedListing(input: {
       if (catId) paths.push(`/category/${catId}`)
       if (citySlug) paths.push(`/city/${citySlug}`)
       if (citySlug && catId) paths.push(`/city/${citySlug}/${catId}`)
+      // A newly Featured business joins the homepage Featured section.
+      if (featured) paths.push('/')
     }
     for (const p of paths) {
       try {
@@ -66,5 +75,20 @@ export async function revalidateApprovedListing(input: {
     }
   } catch {
     // Never fail the approval that triggered this refresh.
+  }
+}
+
+/**
+ * Refresh the homepage after a manual admin Feature/Unfeature toggle
+ * (app/admin/businesses). The toggle writes doc.featured directly, so
+ * it bypasses revalidateApprovedListing — without this the homepage
+ * Featured section would stay stale until the next deploy.
+ * Best effort by design, same as revalidateApprovedListing.
+ */
+export async function revalidateHomepage(): Promise<void> {
+  try {
+    revalidatePath('/')
+  } catch {
+    // ignore — a path that was never cached is a harmless no-op
   }
 }

@@ -22,6 +22,14 @@ export const ADMIN_EMAIL = 'admin@localepak.com'
 const SITE = 'https://www.localepak.com'
 const SUPPORT_LINE = 'Questions? Contact our team at https://www.localepak.com/contact and we will be happy to help.'
 
+// Cross-promotion PS (user order 2026-11-08, extended same day to add
+// ListPak): one line at the end of happy-path owner emails only (welcome
+// / listing-approved / payment-approved). Never in rejection, delete, or
+// admin mail. BOTH URLs live-verified 2026-11-08 (HTTP 200 + correct
+// <title>): PakListings add-business + ListPak add-business.
+const CROSS_PROMO_TEXT = 'P.S. Want more visibility? List your business on PakListings too: https://www.paklistings.com/add-business — and on ListPak: https://www.listpak.com/add-business'
+const CROSS_PROMO_HTML = 'P.S. Want more visibility? List your business on <a href="https://www.paklistings.com/add-business">PakListings</a> too — and on <a href="https://www.listpak.com/add-business">ListPak</a>.'
+
 function esc(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
@@ -65,6 +73,8 @@ export async function queueWelcomeEmail(to: string, ownerName?: string): Promise
     '',
     SUPPORT_LINE,
     '',
+    CROSS_PROMO_TEXT,
+    '',
     '— The LocalePak Team',
   ].join('\n')
   const html = shell(`
@@ -79,6 +89,7 @@ export async function queueWelcomeEmail(to: string, ownerName?: string): Promise
     <p>Every listing is reviewed by our team before it goes public, and we will email you at each step — received, approved, or if anything needs fixing.</p>
     <p><a href="${SITE}/dashboard">Open your dashboard</a></p>
     <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
+    <p>${CROSS_PROMO_HTML}</p>
   `)
   return queueOwnerEmail(to, subject, text, html)
 }
@@ -261,6 +272,8 @@ export async function queueListingApprovedEmail(
       '',
       SUPPORT_LINE,
       '',
+      CROSS_PROMO_TEXT,
+      '',
       '— The LocalePak Team',
     ].join('\n')
     const html = shell(`
@@ -270,6 +283,7 @@ export async function queueListingApprovedEmail(
       ${data.slug ? `<p><a href="${SITE}/business/${esc(data.slug)}">Preview your listing page</a></p>` : ''}
       <p>Want more customers? Ask your happy customers to leave a review on your listing page — reviews help you rank higher.</p>
       <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
+      <p>${CROSS_PROMO_HTML}</p>
     `)
     return queueOwnerEmail(ownerEmail, subject, text, html)
   }
@@ -288,6 +302,8 @@ export async function queueListingApprovedEmail(
     '',
     SUPPORT_LINE,
     '',
+    CROSS_PROMO_TEXT,
+    '',
     '— The LocalePak Team',
   ].join('\n')
   const html = shell(`
@@ -296,6 +312,7 @@ export async function queueListingApprovedEmail(
     ${publicUrl ? `<p><a href="${publicUrl}">See your live profile</a></p>` : ''}
     <p>You can update its details any time from <a href="${SITE}/dashboard">your dashboard</a>.</p>
     <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
+    <p>${CROSS_PROMO_HTML}</p>
   `)
   return queueOwnerEmail(ownerEmail, subject, text, html)
 }
@@ -343,6 +360,8 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
       '',
       SUPPORT_LINE,
       '',
+      CROSS_PROMO_TEXT,
+      '',
       '— The LocalePak Team',
     ].join('\n')
     const html = shell(`
@@ -351,6 +370,7 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
       <p>Your listing is now live on LocalePak.</p>
       <p>Manage your listing any time from <a href="${SITE}/dashboard">your dashboard</a>.</p>
       <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
+      <p>${CROSS_PROMO_HTML}</p>
     `)
     return queueOwnerEmail(ownerEmail, subject, text, html)
   }
@@ -373,6 +393,8 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
     '',
     SUPPORT_LINE,
     '',
+    CROSS_PROMO_TEXT,
+    '',
     '— The LocalePak Team',
   ].join('\n')
   const html = shell(`
@@ -381,6 +403,7 @@ export async function queuePaymentApprovedEmail(item: { id: string; data: any })
     <p>${esc(benefit)}</p>
     <p>Manage your listing any time from <a href="${SITE}/dashboard">your dashboard</a>.</p>
     <p>Questions? <a href="${SITE}/contact">Contact our team</a> and we will be happy to help.</p>
+    <p>${CROSS_PROMO_HTML}</p>
   `)
   return queueOwnerEmail(ownerEmail, subject, text, html)
 }
