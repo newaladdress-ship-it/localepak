@@ -10,7 +10,7 @@ import { StatusBadge, AdminLoading, AdminEmpty, formatDate, approveBtn, rejectBt
 import { RejectPanel, DeletePanel, moderateReject, moderateDelete } from '@/components/admin-moderation'
 import { resolveOwnerEmails } from '@/lib/owner-contact'
 import { queueListingApprovedEmail } from '@/lib/mail'
-import { revalidateApprovedListing } from '@/lib/revalidate'
+import { revalidateApprovedListing, revalidateHomepage } from '@/lib/revalidate'
 
 type Item = { id: string; data: any }
 const TABS = ['all', 'pending', 'approved', 'rejected'] as const
@@ -223,7 +223,22 @@ export default function AdminBusinessesPage() {
                     <button
                       type="button"
                       disabled={busy === id}
-                      onClick={() => patch(id, { featured: !data.featured }, data.featured ? 'Featured removed.' : 'Business marked Featured.')}
+                      onClick={() =>
+                        patch(
+                          id,
+                          // Featuring stamps featuredAt (unfeaturing clears
+                          // it); the homepage Featured section refreshes
+                          // via the afterSuccess revalidation.
+                          {
+                            featured: !data.featured,
+                            featuredAt: data.featured ? null : serverTimestamp(),
+                          },
+                          data.featured ? 'Featured removed.' : 'Business marked Featured.',
+                          async () => {
+                            await revalidateHomepage()
+                          },
+                        )
+                      }
                       className={neutralBtn}
                       aria-pressed={!!data.featured}
                     >
