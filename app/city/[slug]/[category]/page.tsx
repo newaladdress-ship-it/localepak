@@ -7,6 +7,7 @@ import Footer from '@/components/footer'
 import OwnerCtaBand from '@/components/owner-cta-band'
 import ListBusinessCta from '@/components/list-business-cta'
 import { CITIES, CATEGORIES, TOP_CITIES } from '@/lib/data'
+import { SEED_BUSINESSES } from '@/lib/seed-businesses'
 import { CITY_INFO, generateCityCategoryContent } from '@/lib/seo-content'
 import MarkdownContent from '@/components/seo/markdown-content'
 import CityCategoryListings from './listings'
@@ -32,9 +33,21 @@ export const dynamicParams = true
 export const revalidate = 2592000
 
 export function generateStaticParams() {
-  return TOP_CITIES.flatMap(city =>
-    CATEGORIES.map(cat => ({ slug: cityToSlug(city), category: cat.id }))
-  )
+  // ISR-write fix (2026-11-07): prerender ONLY the city×category combos
+  // that have at least one seed business. Every other combo still renders
+  // on demand on first visit (dynamicParams = true above). Previously this
+  // prerendered every TOP_CITIES × CATEGORIES combo (~480 pages, most of
+  // them empty), and every deploy re-stored all of them in the ISR cache.
+  const seen = new Set<string>()
+  const params: { slug: string; category: string }[] = []
+  for (const b of SEED_BUSINESSES) {
+    const key = `${b.citySlug}|${b.categorySlug}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      params.push({ slug: b.citySlug, category: b.categorySlug })
+    }
+  }
+  return params
 }
 
 // Shared between generateMetadata and the page component so the
