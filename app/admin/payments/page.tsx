@@ -108,7 +108,11 @@ export default function AdminPaymentsPage() {
                 ? 'professionals'
                 : 'businesses'
         if (data.listingId) {
-          await updateDoc(doc(db, listingCol, data.listingId), {
+          // Featured tier (PKR 299) buys visible featuring: the listing
+          // is flagged featured + featuredAt so the homepage Featured
+          // Businesses section picks it up. Basic/Premium leave an
+          // admin-set featured flag untouched (never cleared here).
+          const listingUpdate: Record<string, any> = {
             tier: data.tier,
             paymentStatus: 'paid',
             status: 'approved',
@@ -116,7 +120,12 @@ export default function AdminPaymentsPage() {
             rejectionReasons: [],
             rejectionNote: '',
             rejectedAt: null,
-          })
+          }
+          if (data.tier === 'featured') {
+            listingUpdate.featured = true
+            listingUpdate.featuredAt = serverTimestamp()
+          }
+          await updateDoc(doc(db, listingCol, data.listingId), listingUpdate)
           // Refresh the listing's public pages immediately so the
           // approval is visible at once (lib/revalidate.ts).
           try {
@@ -134,6 +143,7 @@ export default function AdminPaymentsPage() {
               slug: ld.slug,
               category: ld.category || ld.mainCategory,
               city: ld.city,
+              featured: data.tier === 'featured',
             })
           } catch {
             // Best effort — the approval itself already succeeded.
@@ -153,7 +163,13 @@ export default function AdminPaymentsPage() {
         return
       }
       const listingCol = data.listingType === 'company' ? 'companies' : 'businesses'
-      const flag = data.plan === 'verified' ? { verified: true } : { featured: true }
+      // Legacy upgrade: 'featured' sets featured + featuredAt (same
+      // single source of truth as the tier path); 'verified' sets
+      // verified ONLY — it must never set featured.
+      const flag =
+        data.plan === 'verified'
+          ? { verified: true }
+          : { featured: true, featuredAt: serverTimestamp() }
       if (data.listingId) {
         await updateDoc(doc(db, listingCol, data.listingId), flag)
         // Refresh the listing's public pages so the flag change shows
@@ -166,6 +182,7 @@ export default function AdminPaymentsPage() {
             slug: ld.slug,
             category: ld.category || ld.mainCategory,
             city: ld.city,
+            featured: data.plan === 'featured',
           })
         } catch {
           // Best effort — the approval itself already succeeded.
