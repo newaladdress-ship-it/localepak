@@ -39,7 +39,7 @@ export const dynamicParams = true
 // Firestore listings refresh at most every 7 days (owner decision
 // 2026-10-31); approvals refresh instantly via on-demand revalidation
 // (lib/revalidate.ts), and seed listings use the 2-year route instead.
-export const revalidate = 604800
+export const revalidate = 63072000
 
 export function generateStaticParams() {
   return SEED_BUSINESSES.map((b) => ({ slug: b.slug }))
