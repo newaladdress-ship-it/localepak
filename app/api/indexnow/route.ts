@@ -6,8 +6,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { urls, apiKey } = body
 
-    // Validate request
-    if (apiKey && apiKey !== INDEXNOW_API_KEY && apiKey !== process.env.ADMIN_SECRET_KEY) {
+    // Validate request — a missing or wrong key is rejected (no silent bypass).
+    if (!apiKey || (apiKey !== INDEXNOW_API_KEY && apiKey !== process.env.ADMIN_SECRET_KEY)) {
       return NextResponse.json({ error: 'Unauthorized API key' }, { status: 401 })
     }
 
