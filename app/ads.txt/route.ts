@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 export const dynamic = 'force-static'
-export const revalidate = 86400
+export const revalidate = 604800
 
 export async function GET() {
   const filePath = path.join(process.cwd(), 'public', 'ads.txt')
